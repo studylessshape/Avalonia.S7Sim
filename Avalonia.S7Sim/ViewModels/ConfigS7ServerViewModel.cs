@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Avalonia.S7Sim.ViewModels;
 
-namespace Avalonia.S7Sim.ViewModels
+public partial class ConfigS7ServerViewModel : ViewModelBase
 {
-    internal class ConfigS7ServerViewModel
-    {
-    }
+
 }

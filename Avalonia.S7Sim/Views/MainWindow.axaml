@@ -3,6 +3,7 @@
         xmlns:vm="using:Avalonia.S7Sim.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:dialogHost="using:DialogHostAvalonia"
         mc:Ignorable="d"
         d:DesignWidth="800"
         d:DesignHeight="450"
@@ -20,12 +21,34 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid ColumnDefinitions="3*,1*">
-        <TabControl TabStripPlacement="Left">
-            <TabItem Header="DB 配置" />
-            <TabItem Header="DB 命令" />
-            <TabItem Header="Py 引擎" />
-        </TabControl>
-    </Grid>
+    <dialogHost:DialogHost CloseOnClickAway="True">
+        <dialogHost:DialogHost.DialogContent>
+            <DockPanel>
+                <DockPanel DockPanel.Dock="Top">
+                    <TextBlock DockPanel.Dock="Left" Text="Title" />
+                    <Button Content="X" />
+                </DockPanel>
+                <StackPanel>
+                    <TextBlock Text="content" />
+                </StackPanel>
+                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
+                    <Button Content="Ok" />
+                    <Button Content="No" />
+                    <Button Content="Cancel" />
+                </StackPanel>
+            </DockPanel>
+        </dialogHost:DialogHost.DialogContent>
+        <Grid ColumnDefinitions="3*,1*">
+            <TabControl TabStripPlacement="Left">
+                <TabItem Header="DB 配置">
+                    <StackPanel>
+                        <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=dialogHost:DialogHost}, Path=OpenDialogCommand}">ShowDialog</Button>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="DB 命令" />
+                <TabItem Header="Py 引擎" />
+            </TabControl>
+        </Grid>
+    </dialogHost:DialogHost>
 
 </Window>
