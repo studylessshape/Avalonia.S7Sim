@@ -2,18 +2,132 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:vm="using:Avalonia.S7Sim.ViewModels"
+             xmlns:converter="using:Avalonia.S7Sim.Converters"
+             xmlns:models="using:Avalonia.S7Sim.Models"
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
              x:Class="Avalonia.S7Sim.Views.ConfigS7ServerView"
+             x:DataType="vm:ConfigS7ServerViewModel"
+             x:Name="Root"
              >
-    <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="auto, *">
-        <TextBox Grid.Column="0" VerticalContentAlignment="Center">
-            <TextBox.InnerLeftContent>
-                <TextBlock Text="Ip Address:" FontSize="20" />
-            </TextBox.InnerLeftContent>
-        </TextBox>
-        <Button Grid.Column="2" Content="启动" />
-        <Button Grid.Column="3" Content="停止" />
-    </Grid>
+    <Design.DataContext>
+        <vm:ConfigS7ServerViewModel />
+    </Design.DataContext>
+    <UserControl.Resources>
+        <converter:EnumToArrayConverter x:Key="EnumToArrayConverter" />
+        <converter:ValueSubstractConverter x:Key="ValueSubStractConverter" />
+        <converter:BoolReverseConverter x:Key="BoolReverseConverter" />
+    </UserControl.Resources>
+    <StackPanel Margin="10"
+                x:Name="PART_RootPanel"
+                >
+        <StackPanel Orientation="Horizontal"
+                    Spacing="10"
+                    x:Name="PART_IpConfig"
+                    >
+            <TextBlock Text="Ip 地址:"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       />
+            <u:IPv4Box MinWidth="200"
+                       IsTabStop=""
+                       IPAddress="{Binding Address}"
+                       ShowLeadingZero="False"
+                       />
+            <Button Grid.Column="2"
+                    Content="启动"
+                    Theme="{DynamicResource SolidButton}"
+                    Command="{Binding StartServerCommand}"
+                    x:Name="PART_StartServer"
+                    />
+            <Button Grid.Column="3"
+                    Theme="{DynamicResource SolidButton}"
+                    Command="{Binding StopServerCommand}"
+                    Content="停止"
+                    />
+        </StackPanel>
+        <StackPanel Margin="0 10"
+                    x:Name="PART_DataPanel"
+                    IsEnabled="{Binding #PART_StartServer.IsEffectivelyEnabled}"
+                    >
+            <StackPanel.Height>
+                <MultiBinding Converter="{StaticResource ValueSubStractConverter}">
+                    <Binding Path="#Root.Bounds.Height" />
+                    <Binding Path="#PART_RootPanel.Margin.Top" />
+                    <Binding Path="#PART_RootPanel.Margin.Bottom" />
+                    <Binding Path="#PART_IpConfig.Bounds.Height" />
+                    <Binding Path="#PART_DataPanel.Margin.Bottom" />
+                    <Binding Path="#PART_DataPanel.Margin.Top" />
+                </MultiBinding>
+            </StackPanel.Height>
+            <Button Command="{Binding AddNewItemCommand}"
+                    HorizontalAlignment="Left"
+                    Classes="Success"
+                    x:Name="PART_AddButton"
+                    >
+                Add
+            </Button>
+            <DataGrid ItemsSource="{Binding S7Servers}"
+                      IsReadOnly="False"
+                      x:Name="DATA_Root"
+                      IsTabStop="True"
+                      GridLinesVisibility="All"
+                      >
+                <DataGrid.Height>
+                    <MultiBinding Converter="{StaticResource ValueSubStractConverter}">
+                        <Binding Path="#PART_DataPanel.Height" />
+                        <Binding Path="#PART_AddButton.Bounds.Height" />
+                    </MultiBinding>
+                </DataGrid.Height>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="类型"
+                                            MinWidth="65"
+                                            >
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding AreaKind}"
+                                           VerticalAlignment="Center"
+                                           Margin="10"
+                                           />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding Source={x:Type models:AreaKind}, Converter={StaticResource EnumToArrayConverter}}"
+                                          SelectedValue="{Binding AreaKind}"
+                                          Margin="2"
+                                          />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="DB 地址"
+                                        Binding="{Binding BlockNumber}"
+                                        />
+                    <DataGridTextColumn Header="DB 大小"
+                                        Binding="{Binding BlockSize}"
+                                        />
+                    <DataGridTemplateColumn Header="删除"
+                                            MaxWidth="60"
+                                            IsReadOnly="True"
+                                            >
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Classes="Danger"
+                                        MaxHeight="20"
+                                        Theme="{DynamicResource BorderlessButton}"
+                                        Command="{Binding #DATA_Root.((vm:ConfigS7ServerViewModel)DataContext).RemoveItemCommand}"
+                                        CommandParameter="{Binding .}"
+                                        >
+                                    <PathIcon Data="{StaticResource circle_delete}" />
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </StackPanel>
 </UserControl>

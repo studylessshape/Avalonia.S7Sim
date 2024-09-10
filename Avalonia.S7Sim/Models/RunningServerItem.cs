@@ -1,6 +1,6 @@
 ﻿namespace Avalonia.S7Sim.Models;
 
-public class ServerItem
+public class RunningServerItem
 {
     public AreaKind AreaKind { get; set; }
 

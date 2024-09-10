@@ -1,8 +1,8 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:dialogHostAvalonia="using:DialogHostAvalonia"
              x:Class="Avalonia.S7Sim.App"
              xmlns:local="using:Avalonia.S7Sim"
+             xmlns:u-semi="https://irihi.tech/ursa/themes/semi"
              RequestedThemeVariant="Default"
              >
     <!--  "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options.  -->
@@ -12,7 +12,11 @@
     </Application.DataTemplates>
 
     <Application.Styles>
-        <FluentTheme />
-        <dialogHostAvalonia:DialogHostStyles />
+        <!--<FluentTheme />-->
+        <!--<SimpleTheme />-->
+        <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" />
+        <u-semi:SemiTheme Locale="zh-CN" />
+        <StyleInclude Source="avares://Semi.Avalonia.DataGrid/Index.axaml" />
+        <StyleInclude Source="avares://Avalonia.S7Sim/Icons.axaml" />
     </Application.Styles>
 </Application>

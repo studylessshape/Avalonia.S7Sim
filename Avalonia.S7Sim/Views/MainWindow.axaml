@@ -1,17 +1,21 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:Avalonia.S7Sim.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:dialogHost="using:DialogHostAvalonia"
-        mc:Ignorable="d"
-        d:DesignWidth="800"
-        d:DesignHeight="450"
-        x:Class="Avalonia.S7Sim.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="Avalonia.S7Sim"
-        >
+<u:UrsaWindow xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:vm="using:Avalonia.S7Sim.ViewModels"
+              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+              xmlns:u="https://irihi.tech/ursa"
+              xmlns:local="using:Avalonia.S7Sim.Views"
+              mc:Ignorable="d"
+              d:DesignWidth="800"
+              d:DesignHeight="450"
+              x:Class="Avalonia.S7Sim.Views.MainWindow"
+              x:DataType="vm:MainWindowViewModel"
+              Icon="/Assets/avalonia-logo.ico"
+              Title="S7 Simulate by Avalonia"
+              IsTitleBarVisible="True"
+              x:Name="Root_Window"
+              RequestedThemeVariant="Dark"
+              >
 
     <Design.DataContext>
         <!--
@@ -20,35 +24,37 @@
         -->
         <vm:MainWindowViewModel />
     </Design.DataContext>
-
-    <dialogHost:DialogHost CloseOnClickAway="True">
-        <dialogHost:DialogHost.DialogContent>
-            <DockPanel>
-                <DockPanel DockPanel.Dock="Top">
-                    <TextBlock DockPanel.Dock="Left" Text="Title" />
-                    <Button Content="X" />
-                </DockPanel>
-                <StackPanel>
-                    <TextBlock Text="content" />
-                </StackPanel>
-                <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
-                    <Button Content="Ok" />
-                    <Button Content="No" />
-                    <Button Content="Cancel" />
-                </StackPanel>
-            </DockPanel>
-        </dialogHost:DialogHost.DialogContent>
-        <Grid ColumnDefinitions="3*,1*">
+    <u:UrsaWindow.RightContent>
+        <StackPanel Orientation="Horizontal">
+            <u:ThemeToggleButton />
+        </StackPanel>
+    </u:UrsaWindow.RightContent>
+    <u:UrsaWindow.TitleBarContent>
+        <TextBlock Margin="10 0"
+                   Text="{Binding #Root_Window.Title}"
+                   Theme="{DynamicResource TitleTextBlock}"
+                   VerticalAlignment="Center"
+                   />
+    </u:UrsaWindow.TitleBarContent>
+    <Border BorderThickness="0 2 0 0"
+            Margin="0 40 0 0"
+            BorderBrush="{DynamicResource BorderCardBorderBrush}"
+            >
+        <Grid ColumnDefinitions="3*,1*"
+              Margin="10 10"
+              ShowGridLines="True"
+              >
             <TabControl TabStripPlacement="Left">
-                <TabItem Header="DB 配置">
-                    <StackPanel>
-                        <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=dialogHost:DialogHost}, Path=OpenDialogCommand}">ShowDialog</Button>
-                    </StackPanel>
-                </TabItem>
-                <TabItem Header="DB 命令" />
-                <TabItem Header="Py 引擎" />
+                <TabItem Header="DB 配置"
+                         x:Name="PART_DBConfig"
+                         />
+                <TabItem Header="DB 命令"
+                         x:Name="PART_DBCommand"
+                         />
+                <TabItem Header="Py 引擎"
+                         x:Name="PART_PyEngine"
+                         />
             </TabControl>
         </Grid>
-    </dialogHost:DialogHost>
-
-</Window>
+    </Border>
+</u:UrsaWindow>

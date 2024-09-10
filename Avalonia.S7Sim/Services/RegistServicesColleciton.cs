@@ -12,6 +12,9 @@ internal static class RegistServicesColleciton
         services.AddSingleton<MainWindow>();
         services.AddSingleton<MainWindowViewModel>();
 
+        services.AddSingleton<ConfigS7ServerView>();
+        services.AddSingleton<ConfigS7ServerViewModel>();
+
         return services;
     }
 

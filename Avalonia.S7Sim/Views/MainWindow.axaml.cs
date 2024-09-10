@@ -1,11 +1,11 @@
-using Avalonia.Controls;
-using Avalonia.S7Sim.Services.Dialog;
 using Avalonia.S7Sim.ViewModels;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using Ursa.Controls;
 
 namespace Avalonia.S7Sim.Views
 {
-    public partial class MainWindow : Window, IDialogBox
+    public partial class MainWindow : UrsaWindow
     {
 #if DEBUG
         public MainWindow()
@@ -14,21 +14,12 @@ namespace Avalonia.S7Sim.Views
         }
 #endif
 
-        public MainWindow(MainWindowViewModel viewModel)
+        public MainWindow(MainWindowViewModel viewModel, IServiceProvider serviceProvider)
         {
             this.DataContext = viewModel;
-
             InitializeComponent();
-        }
 
-        public DialogResult ShowDialog(string message, string? title = null, DialogButton dialogButton = DialogButton.Close)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Task<DialogResult> ShowDialogAsync(string message, string? title = null, DialogButton dialogButton = DialogButton.Close)
-        {
-            throw new System.NotImplementedException();
+            PART_DBConfig.Content = serviceProvider.GetService<ConfigS7ServerView>();
         }
     }
 }
