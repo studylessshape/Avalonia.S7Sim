@@ -8,6 +8,6 @@ namespace Avalonia.S7Sim.Services;
 public interface IS7ServerService
 {
     IList<RunningServerItem> RunningItems { get; }
-    Task StartServerAsync(IPAddress? address, IEnumerable<AreaConfig> areaConfigss);
-    Task StopServerAsync();
+    Task<bool> StartServerAsync(IPAddress? address, IEnumerable<AreaConfig> areaConfigss);
+    Task<bool> StopServerAsync();
 }

@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Avalonia.S7Sim.ViewModels"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:uc="using:Avalonia.S7Sim.UserControls"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Avalonia.S7Sim.Views.S7CommandView"
+             x:DataType="vm:S7CommandViewModel"
+             >
+    <Design.DataContext>
+        <vm:S7CommandViewModel />
+    </Design.DataContext>
+
+    <Grid RowDefinitions="auto,*">
+        <Border Theme="{DynamicResource CardBorder}"
+                Classes="Hover"
+                >
+            <u:Form LabelAlignment="Left"
+                    LabelPosition="Left"
+                    LabelWidth="*"
+                    >
+                <u:FormGroup>
+                    <u:FormItem Label="IpAddress">
+                        <TextBlock Text="{Binding ConfigModel.Address, StringFormat={}{0}}"
+                                   VerticalAlignment="Center"
+                                   FontSize="16"
+                                   />
+                    </u:FormItem>
+                    <u:FormItem Label="批量执行">
+                        <Button Theme="{DynamicResource SolidButton}">
+                            导入 Python 脚本
+                        </Button>
+                    </u:FormItem>
+                    <u:FormItem Label="DB Number">
+                        <u:NumericIntUpDown Value="{Binding OperationsViewModel.TargetDB}" />
+                    </u:FormItem>
+                    <u:FormItem Label="DB Position">
+                        <u:NumericIntUpDown Value="{Binding OperationsViewModel.TargetPos}" />
+                    </u:FormItem>
+                </u:FormGroup>
+            </u:Form>
+        </Border>
+        <uc:OperationsControl Grid.Row="1"
+                              DataContext="{Binding OperationsViewModel}"
+                              />
+    </Grid>
+</UserControl>

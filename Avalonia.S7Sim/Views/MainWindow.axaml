@@ -9,7 +9,6 @@
               d:DesignWidth="800"
               d:DesignHeight="450"
               x:Class="Avalonia.S7Sim.Views.MainWindow"
-              x:DataType="vm:MainWindowViewModel"
               Icon="/Assets/avalonia-logo.ico"
               Title="S7 Simulate by Avalonia"
               IsTitleBarVisible="True"

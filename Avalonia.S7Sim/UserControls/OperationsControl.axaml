@@ -1,0 +1,190 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
+             xmlns:vm="using:Avalonia.S7Sim.ViewModels"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Avalonia.S7Sim.UserControls.OperationsControl"
+             >
+    <Design.DataContext>
+        <vm:OperationsViewModel />
+    </Design.DataContext>
+    <TabControl>
+        <TabItem Header="Bit 操作">
+            <u:Form LabelPosition="Left"
+                    LabelWidth="*"
+                    LabelAlignment="Left"
+                    >
+                <u:FormGroup>
+                    <u:FormItem Label="第 N 位">
+                        <u:NumericByteUpDown Value="{Binding TargetBitPos}"
+                                             Maximum="7"
+                                             />
+                    </u:FormItem>
+                    <u:FormItem Label="读操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="读取"
+                                    Command="{Binding ReadBitCommand}"
+                                    />
+                            <CheckBox IsChecked="{Binding BitRead}"
+                                      IsEnabled="False"
+                                      />
+                        </StackPanel>
+                    </u:FormItem>
+                    <u:FormItem Label="写操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="写入"
+                                    Command="{Binding WriteBitCommand}"
+                                    />
+                            <CheckBox IsChecked="{Binding BitToWrite}" />
+                        </StackPanel>
+                    </u:FormItem>
+                </u:FormGroup>
+            </u:Form>
+        </TabItem>
+        <TabItem Header="Short 操作">
+            <u:Form LabelPosition="Left"
+                    LabelWidth="*"
+                    LabelAlignment="Left"
+                    >
+                <u:FormGroup>
+                    <u:FormItem Label="读操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="读取"
+                                    Command="{Binding ReadShortCommand}"
+                                    />
+                            <TextBlock Text="{Binding ShortRead}"
+                                       VerticalAlignment="Center"
+                                       MinWidth="50"
+                                       />
+                        </StackPanel>
+                    </u:FormItem>
+                    <u:FormItem Label="写操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="写入"
+                                    Command="{Binding WriteShortCommand}"
+                                    />
+                            <u:NumericShortUpDown Value="{Binding ShortToWrite}"
+                                                  MinWidth="80"
+                                                  />
+                        </StackPanel>
+                    </u:FormItem>
+                </u:FormGroup>
+            </u:Form>
+        </TabItem>
+        <TabItem Header="UInt 操作">
+            <u:Form LabelPosition="Left"
+                    LabelWidth="*"
+                    LabelAlignment="Left"
+                    >
+                <u:FormGroup>
+                    <u:FormItem Label="读操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="读取"
+                                    Command="{Binding ReadUIntCommand}"
+                                    />
+                            <TextBlock Text="{Binding UIntRead}"
+                                       VerticalAlignment="Center"
+                                       MinWidth="60"
+                                       />
+                        </StackPanel>
+                    </u:FormItem>
+                    <u:FormItem Label="写操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="写入"
+                                    Command="{Binding WriteUIntCommand}"
+                                    />
+                            <u:NumericUIntUpDown Value="{Binding UIntToWrite}"
+                                                 MinWidth="100"
+                                                 />
+                        </StackPanel>
+                    </u:FormItem>
+                </u:FormGroup>
+            </u:Form>
+        </TabItem>
+        <TabItem Header="ULong 操作">
+            <u:Form LabelPosition="Left"
+                    LabelWidth="*"
+                    LabelAlignment="Left"
+                    >
+                <u:FormGroup>
+                    <u:FormItem Label="读操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="读取"
+                                    Command="{Binding ReadULongCommand}"
+                                    />
+                            <TextBlock Text="{Binding ULongRead}"
+                                       VerticalAlignment="Center"
+                                       MinWidth="80"
+                                       />
+                        </StackPanel>
+                    </u:FormItem>
+                    <u:FormItem Label="写操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="写入"
+                                    Command="{Binding WriteULongCommand}"
+                                    />
+                            <u:NumericUIntUpDown Value="{Binding ULongToWrite}"
+                                                 MinWidth="120"
+                                                 />
+                        </StackPanel>
+                    </u:FormItem>
+                </u:FormGroup>
+            </u:Form>
+        </TabItem>
+        <TabItem Header="String 操作">
+            <u:Form LabelPosition="Left"
+                    LabelWidth="*"
+                    LabelAlignment="Left"
+                    Margin="0 0 20 0"
+                    >
+                <u:FormGroup>
+                    <u:FormItem Label="读操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="读取"
+                                    Command="{Binding ReadStringCommand}"
+                                    />
+                            <TextBlock Text="{Binding StringRead}"
+                                       VerticalAlignment="Center"
+                                       MinWidth="80"
+                                       />
+                        </StackPanel>
+                    </u:FormItem>
+                    <u:FormItem Label="待写入字符串">
+                        <TextBox Text="{Binding StringToWrite}" />
+                    </u:FormItem>
+                    <u:FormItem Label="字符串最大长度">
+                        <u:NumericIntUpDown Value="{Binding StringMaxLength}" />
+                    </u:FormItem>
+                    <u:FormItem>
+                        <Button Content="写入"
+                                Command="{Binding WriteStringCommand}"
+                                HorizontalAlignment="Left"
+                                />
+                    </u:FormItem>
+                </u:FormGroup>
+            </u:Form>
+        </TabItem>
+    </TabControl>
+</UserControl>

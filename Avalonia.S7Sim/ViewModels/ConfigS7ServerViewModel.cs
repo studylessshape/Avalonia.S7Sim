@@ -11,6 +11,14 @@ namespace Avalonia.S7Sim.ViewModels;
 
 public partial class ConfigS7ServerViewModel : ViewModelBase
 {
+#if DEBUG
+#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑添加 "required" 修饰符或声明为可为 null。
+    public ConfigS7ServerViewModel()
+#pragma warning restore CS8618
+    {
+        
+    }
+#endif
     private readonly IS7ServerService _serverService;
 
     [ObservableProperty]
@@ -48,8 +56,7 @@ public partial class ConfigS7ServerViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task StartServer()
     {
-        await _serverService.StartServerAsync(Address, S7Servers.Select(item => item.ToConfig()));
-        IsServerStart = true;
+        IsServerStart = await _serverService.StartServerAsync(Address, S7Servers.Select(item => item.ToConfig()));
     }
 
     [RelayCommand(CanExecute = nameof(CanStop))]

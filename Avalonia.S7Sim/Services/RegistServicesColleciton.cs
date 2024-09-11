@@ -1,4 +1,5 @@
-﻿using Avalonia.S7Sim.ViewModels;
+﻿using Avalonia.S7Sim.UserControls;
+using Avalonia.S7Sim.ViewModels;
 using Avalonia.S7Sim.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,6 +20,10 @@ internal static class RegistServicesColleciton
         services.AddSingleton<LogPanel>();
         services.AddSingleton<LogPanelViewModel>();
 
+        services.AddSingleton<S7CommandView>();
+        services.AddSingleton<S7CommandViewModel>();
+
+        services.AddScoped<OperationsViewModel>();
         services.AddSingleton<MessageBoxViewModel>();
 
         return services;

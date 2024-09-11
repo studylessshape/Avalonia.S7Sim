@@ -23,7 +23,7 @@ public class S7ServerService : IDisposable, IS7ServerService
         this._logger = logger;
     }
 
-    public Task StartServerAsync(IPAddress? address, IEnumerable<AreaConfig> areaConfigs)
+    public Task<bool> StartServerAsync(IPAddress? address, IEnumerable<AreaConfig> areaConfigs)
     {
         try
         {
@@ -32,7 +32,7 @@ public class S7ServerService : IDisposable, IS7ServerService
             if (areaConfigs == null || areaConfigs.Count() == 0)
             {
                 MessageHelper.ShowMessage("当前 DBConfigs 为 NULL !");
-                return Task.CompletedTask;
+                return Task.FromResult(false);
             }
 
             _runningItems.Clear();
@@ -61,33 +61,34 @@ public class S7ServerService : IDisposable, IS7ServerService
             }
             S7Server.StartTo(address?.ToString() ?? "127.0.0.1");
             MessageHelper.SendLogMessage(new LogMessage { Message = "[+]服务启动..." });
+
+            return Task.FromResult(true);
         }
         catch (Exception ex)
         {
             var msg = $"启动服务器出错：{ex.Message}";
             _logger.LogError(msg);
             MessageHelper.ShowMessage(msg);
+            return Task.FromResult(false);
         }
-
-        return Task.CompletedTask;
     }
 
-    public Task StopServerAsync()
+    public Task<bool> StopServerAsync()
     {
         try
         {
             S7Server?.Stop();
             S7Server = null;
             MessageHelper.SendLogMessage(new LogMessage() { Message = "[!]服务停止...", Level = Controls.Notifications.NotificationType.Warning });
+            return Task.FromResult(true);
         }
         catch (Exception ex)
         {
             var msg = $"停止服务器出错：{ex.Message}";
             _logger.LogError(msg);
             MessageHelper.ShowMessage(msg);
+            return Task.FromResult(false);
         }
-
-        return Task.CompletedTask;
     }
 
     public void Dispose()

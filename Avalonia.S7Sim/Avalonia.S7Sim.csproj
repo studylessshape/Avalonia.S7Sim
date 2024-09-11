@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <AvaloniaUseCompiledBindingsByDefault>False</AvaloniaUseCompiledBindingsByDefault>
     <PublishTrimmed>False</PublishTrimmed>
     <PublishAot>False</PublishAot>
   </PropertyGroup>
@@ -14,8 +14,6 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
-    <Folder Include="Controls\" />
-    <Folder Include="Services\MB\" />
   </ItemGroup>
 
   <ItemGroup>

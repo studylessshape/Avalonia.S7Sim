@@ -10,7 +10,6 @@
              d:DesignWidth="800"
              d:DesignHeight="450"
              x:Class="Avalonia.S7Sim.Views.ConfigS7ServerView"
-             x:DataType="vm:ConfigS7ServerViewModel"
              x:Name="Root"
              >
     <Design.DataContext>
@@ -33,9 +32,9 @@
                        FontSize="16"
                        />
             <u:IPv4Box MinWidth="200"
-                       IsTabStop=""
                        IPAddress="{Binding Address}"
                        ShowLeadingZero="False"
+                       InputMode="Fast"
                        />
             <Button Grid.Column="2"
                     Content="启动"
@@ -96,10 +95,9 @@
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
                             <DataTemplate>
-                                <ComboBox ItemsSource="{Binding Source={x:Type models:AreaKind}, Converter={StaticResource EnumToArrayConverter}}"
-                                          SelectedValue="{Binding AreaKind}"
-                                          Margin="2"
-                                          />
+                                <u:EnumSelector EnumType="models:AreaKind"
+                                                Value="{Binding AreaKind}"
+                                                />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellEditingTemplate>
                     </DataGridTemplateColumn>
@@ -118,7 +116,7 @@
                                 <Button Classes="Danger"
                                         MaxHeight="20"
                                         Theme="{DynamicResource BorderlessButton}"
-                                        Command="{Binding #DATA_Root.((vm:ConfigS7ServerViewModel)DataContext).RemoveItemCommand}"
+                                        Command="{Binding #Root.DataContext.RemoveItemCommand}"
                                         CommandParameter="{Binding .}"
                                         >
                                     <PathIcon Data="{StaticResource circle_delete}" />
