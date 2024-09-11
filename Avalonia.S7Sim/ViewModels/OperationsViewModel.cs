@@ -1,6 +1,8 @@
-﻿using Avalonia.S7Sim.Services;
+﻿using Avalonia.S7Sim.Messages;
+using Avalonia.S7Sim.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using System;
 
 namespace Avalonia.S7Sim.ViewModels;
 
@@ -41,13 +43,27 @@ public partial class OperationsViewModel : ViewModelBase
     [RelayCommand]
     private void WriteBit()
     {
-        _serverService.WriteBit(TargetDB, TargetPos, TargetBitPos, BitToWrite);
+        try
+        {
+            _serverService.WriteBit(TargetDB, TargetPos, TargetBitPos, BitToWrite);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
     }
 
     [RelayCommand]
     private void ReadBit()
     {
-        BitRead = _serverService.ReadBit(TargetDB, TargetPos, TargetBitPos);
+        try
+        {
+            BitRead = _serverService.ReadBit(TargetDB, TargetPos, TargetBitPos);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
     }
     #endregion
 
@@ -61,13 +77,27 @@ public partial class OperationsViewModel : ViewModelBase
     [RelayCommand]
     private void WriteShort()
     {
-        _serverService.WriteShort(TargetDB, TargetPos, ShortToWrite);
+        try
+        {
+            _serverService.WriteShort(TargetDB, TargetPos, ShortToWrite);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
     }
 
     [RelayCommand]
     private void ReadShort()
     {
-        ShortRead = _serverService.ReadShort(TargetDB, TargetPos);
+        try
+        {
+            ShortRead = _serverService.ReadShort(TargetDB, TargetPos);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
     }
     #endregion
 
@@ -81,7 +111,14 @@ public partial class OperationsViewModel : ViewModelBase
     [RelayCommand]
     private void WriteUInt()
     {
-        _serverService.WriteUInt32(TargetDB, TargetPos, UIntToWrite);
+        try
+        {
+            _serverService.WriteUInt32(TargetDB, TargetPos, UIntToWrite);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
     }
 
     [RelayCommand]
@@ -101,13 +138,27 @@ public partial class OperationsViewModel : ViewModelBase
     [RelayCommand]
     private void WriteULong()
     {
-        _serverService.WriteULong(TargetDB, TargetPos, ULongToWrite);
+        try
+        {
+            _serverService.WriteULong(TargetDB, TargetPos, ULongToWrite);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
     }
 
     [RelayCommand]
     private void ReadULong()
     {
-        ULongRead = _serverService.ReadULong(TargetDB, TargetPos);
+        try
+        {
+            ULongRead = _serverService.ReadULong(TargetDB, TargetPos);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
     }
     #endregion
 
@@ -121,13 +172,27 @@ public partial class OperationsViewModel : ViewModelBase
     [RelayCommand]
     private void WriteReal()
     {
-        _serverService.WriteReal(TargetDB, TargetPos, RealToWrite);
+        try
+        {
+            _serverService.WriteReal(TargetDB, TargetPos, RealToWrite);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
     }
 
     [RelayCommand]
     private void ReadReal()
     {
-        RealRead = _serverService.ReadULong(TargetDB, TargetPos);
+        try
+        {
+            RealRead = _serverService.ReadULong(TargetDB, TargetPos);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
     }
     #endregion
 
@@ -139,18 +204,32 @@ public partial class OperationsViewModel : ViewModelBase
     private string? _stringRead;
 
     [ObservableProperty]
-    private int _stringMaxLength;
+    private int _stringMaxLength = 256;
 
     [RelayCommand]
     private void WriteString()
     {
-        _serverService.WriteString(TargetDB, TargetPos, StringMaxLength, StringToWrite);
+        try
+        {
+            _serverService.WriteString(TargetDB, TargetPos, StringMaxLength, StringToWrite);
+        }
+        catch (IndexOutOfRangeException) 
+        { 
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小"); 
+        }
     }
 
     [RelayCommand]
     private void ReadString()
     {
-        StringRead = _serverService.ReadString(TargetDB, TargetPos);
+        try
+        {
+            StringRead = _serverService.ReadString(TargetDB, TargetPos);
+        }
+        catch (IndexOutOfRangeException) 
+        { 
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小"); 
+        }
     }
     #endregion
 }

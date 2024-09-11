@@ -172,7 +172,9 @@
                         </StackPanel>
                     </u:FormItem>
                     <u:FormItem Label="待写入字符串">
-                        <TextBox Text="{Binding StringToWrite}" />
+                        <TextBox Text="{Binding StringToWrite}"
+                                 Classes="ClearButton"
+                                 />
                     </u:FormItem>
                     <u:FormItem Label="字符串最大长度">
                         <u:NumericIntUpDown Value="{Binding StringMaxLength}" />
