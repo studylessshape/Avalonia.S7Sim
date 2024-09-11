@@ -30,7 +30,6 @@
     <PackageReference Include="Irihi.Ursa" Version="1.2.0" />
     <PackageReference Include="Irihi.Ursa.Themes.Semi" Version="1.2.0" />
     <PackageReference Include="IronPython.StdLib" Version="3.4.1" />
-    <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Semi.Avalonia" Version="11.1.0.3" />

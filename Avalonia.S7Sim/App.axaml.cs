@@ -27,6 +27,7 @@ namespace Avalonia.S7Sim
                 .ConfigureServices(RegistServicesColleciton.Regist)
                 .Build();
             ServiceProvider = s_host.Services;
+            ServiceProvider.WeakupService();
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -39,23 +40,19 @@ namespace Avalonia.S7Sim
                 BindingPlugins.DataValidators.RemoveAt(0);
                 HostStartUp();
                 desktop.MainWindow = ServiceProvider.GetService<MainWindow>();
-                desktop.Exit += async (_, _) =>
-                {
-                    if (s_host != null)
-                    {
-                        try
-                        {
-                            await s_host.StopAsync();
-                        }
-                        catch (Exception)
-                        {
-                            // do nothing
-                        }
-                    }
-                };
+                desktop.Exit += ExitHost;
             }
 
             base.OnFrameworkInitializationCompleted();
+        }
+
+        private void ExitHost(object? sender, ControlledApplicationLifetimeExitEventArgs e)
+        {
+            using(s_host)
+            {
+                var lifetime = s_host?.Services.GetRequiredService<IHostApplicationLifetime>();
+                lifetime?.StopApplication();
+            }
         }
     }
 }

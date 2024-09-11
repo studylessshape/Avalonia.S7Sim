@@ -1,4 +1,5 @@
 using Avalonia.S7Sim.ViewModels;
+using Avalonia.Styling;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Ursa.Controls;
@@ -19,7 +20,13 @@ namespace Avalonia.S7Sim.Views
             this.DataContext = viewModel;
             InitializeComponent();
 
+            if (App.Current != null)
+            {
+                App.Current.RequestedThemeVariant = ThemeVariant.Dark;
+            }
+
             PART_DBConfig.Content = serviceProvider.GetService<ConfigS7ServerView>();
+            PART_LogPanel.Content = serviceProvider.GetService<LogPanel>();
         }
     }
 }

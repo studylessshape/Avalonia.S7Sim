@@ -14,7 +14,6 @@
               Title="S7 Simulate by Avalonia"
               IsTitleBarVisible="True"
               x:Name="Root_Window"
-              RequestedThemeVariant="Dark"
               >
 
     <Design.DataContext>
@@ -26,7 +25,7 @@
     </Design.DataContext>
     <u:UrsaWindow.RightContent>
         <StackPanel Orientation="Horizontal">
-            <u:ThemeToggleButton />
+            <u:ThemeToggleButton x:Name="PART_ThemeToggleButton" />
         </StackPanel>
     </u:UrsaWindow.RightContent>
     <u:UrsaWindow.TitleBarContent>
@@ -40,9 +39,8 @@
             Margin="0 40 0 0"
             BorderBrush="{DynamicResource BorderCardBorderBrush}"
             >
-        <Grid ColumnDefinitions="3*,1*"
+        <Grid ColumnDefinitions="3*,2,1*"
               Margin="10 10"
-              ShowGridLines="True"
               >
             <TabControl TabStripPlacement="Left">
                 <TabItem Header="DB 配置"
@@ -50,11 +48,21 @@
                          />
                 <TabItem Header="DB 命令"
                          x:Name="PART_DBCommand"
-                         />
+                         >
+                    <Button Content="Add Log"
+                            Command="{Binding AddLogCommand}"
+                            />
+                </TabItem>
                 <TabItem Header="Py 引擎"
                          x:Name="PART_PyEngine"
                          />
             </TabControl>
+            <GridSplitter Grid.Column="1"
+                          ResizeDirection="Columns"
+                          />
+            <ContentControl x:Name="PART_LogPanel"
+                            Grid.Column="2"
+                            />
         </Grid>
     </Border>
 </u:UrsaWindow>
