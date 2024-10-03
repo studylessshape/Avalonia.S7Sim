@@ -1,5 +1,4 @@
-﻿using Avalonia.S7Sim.UserControls;
-using Avalonia.S7Sim.ViewModels;
+﻿using Avalonia.S7Sim.ViewModels;
 using Avalonia.S7Sim.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,6 +12,10 @@ internal static class RegistServicesColleciton
     {
         services.AddSingleton<MainWindow>();
         services.AddSingleton<MainWindowViewModel>();
+        services.AddSingleton(provider =>
+        {
+            return provider.GetRequiredService<MainWindow>().StorageProvider;
+        });
 
         services.AddSingleton<ConfigS7ServerView>();
         services.AddSingleton<ConfigS7ServerViewModel>();
@@ -25,6 +28,9 @@ internal static class RegistServicesColleciton
 
         services.AddScoped<OperationsViewModel>();
         services.AddSingleton<MessageBoxViewModel>();
+
+        services.AddSingleton<PyEngineView>();
+        services.AddSingleton<PyEngineViewModel>();
 
         return services;
     }
@@ -43,6 +49,8 @@ internal static class RegistServicesColleciton
         services.AddSingleton<IS7ServerService, S7ServerService>();
         services.AddSingleton<IS7DataBlockService, S7DataBlockService>();
         services.AddSingleton<IS7MBService, S7MBService>();
+
+        services.AddSingleton<PyScriptRunner>();
 
         services.RegistViews();
     }

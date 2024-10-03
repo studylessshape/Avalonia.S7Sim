@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Avalonia.S7Sim.ViewModels"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Avalonia.S7Sim.Views.PyEngineView"
+             >
+    <Design.DataContext>
+        <vm:PyEngineViewModel />
+    </Design.DataContext>
+    <HeaderedContentControl Theme="{DynamicResource GroupBox}"
+                            Header="Python 路径"
+                            >
+        <Grid RowDefinitions="*, auto">
+            <ListBox ItemsSource="{Binding PyEngineSearchPaths}" />
+            <Grid ColumnDefinitions="auto,*"
+                  Grid.Row="1"
+                  >
+                <Button Classes="Primary"
+                        Theme="{DynamicResource SolidButton}"
+                        Command="{Binding SelectPathCommand}"
+                        >
+                    选择路径
+                </Button>
+            </Grid>
+        </Grid>
+    </HeaderedContentControl>
+</UserControl>

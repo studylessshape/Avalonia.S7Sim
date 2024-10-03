@@ -31,7 +31,9 @@
                                    />
                     </u:FormItem>
                     <u:FormItem Label="批量执行">
-                        <Button Theme="{DynamicResource SolidButton}">
+                        <Button Theme="{DynamicResource SolidButton}"
+                                Command="{Binding RunPyScriptCommand}"
+                                >
                             导入 Python 脚本
                         </Button>
                     </u:FormItem>

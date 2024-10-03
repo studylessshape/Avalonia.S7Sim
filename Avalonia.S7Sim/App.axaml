@@ -18,5 +18,11 @@
         <u-semi:SemiTheme Locale="zh-CN" />
         <StyleInclude Source="avares://Semi.Avalonia.DataGrid/Index.axaml" />
         <StyleInclude Source="avares://Avalonia.S7Sim/Icons.axaml" />
+        <StyleInclude Source="/Styles.axaml" />
     </Application.Styles>
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries />
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>
