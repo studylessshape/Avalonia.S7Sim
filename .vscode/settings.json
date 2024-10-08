@@ -1,6 +1,7 @@
 {
     "conventionalCommits.scopes": [
         "service",
-        "view"
+        "view",
+        "nuget"
     ]
 }
