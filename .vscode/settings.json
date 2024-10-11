@@ -2,6 +2,7 @@
     "conventionalCommits.scopes": [
         "service",
         "view",
-        "nuget"
+        "nuget",
+        "py"
     ]
 }

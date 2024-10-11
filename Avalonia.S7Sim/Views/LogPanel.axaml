@@ -30,7 +30,7 @@
                                             Spacing="3"
                                             >
                                     <TextBlock Text="{Binding TimeStamp, StringFormat='[{0:HH:mm:ss}]'}" />
-                                    <TextBlock Text="{Binding Message}" />
+                                    <SelectableTextBlock Text="{Binding Message}" />
                                 </StackPanel>
                             </u:Banner.Content>
                         </u:Banner>

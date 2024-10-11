@@ -7,6 +7,7 @@ using Microsoft.Scripting.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -38,6 +39,24 @@ public partial class PyEngineViewModel : ViewModelBase
             PyEngineSearchPaths.AddRange(searchPaths.Select(p => new PathForView { Path = p, CanDelete = false }));
         }
         PyEngineSearchPaths.CollectionChanged += PyEngineSearchPaths_CollectionChanged;
+
+        if (PyEngineSearchPaths.Count <= 1)
+        {
+            var processPath = Path.GetDirectoryName(Environment.ProcessPath);
+            if (!string.IsNullOrEmpty(processPath))
+            {
+                PyEngineSearchPaths.AddRange([new PathForView()
+                {
+                    Path = Path.Combine(processPath, "lib"),
+                    CanDelete = false
+                },
+                new PathForView()
+                {
+                    Path = Path.Combine(processPath, "DLLs"),
+                    CanDelete = false
+                }]);
+            }
+        }
     }
 
     private void PyEngineSearchPaths_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
