@@ -19,7 +19,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="*, auto">
-                            <TextBlock Text="{Binding Path}" />
+                            <SelectableTextBlock Text="{Binding Path}" />
                             <!--<Button Classes="Small Danger"
                                     Theme="{DynamicResource BorderlessButton}"
                                     Grid.Column="1"

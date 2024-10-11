@@ -20,10 +20,10 @@ public class ShellCommand : IShellCommand
 
     protected virtual Window CreateDialogWindow(string label)
     {
-        var dialog = new DefaultDialogWindow();
-        dialog.SetValue(DefaultDialogWindow.ButtonsProperty, DialogButton.OK);
-        dialog.SetValue(DefaultDialogWindow.TitleProperty, label);
-        dialog.SetValue(DefaultDialogWindow.CanResizeProperty, true);
+        var dialog = new ShellDialogWindow();
+        dialog.SetValue(ShellDialogWindow.ButtonsProperty, DialogButton.OK);
+        dialog.SetValue(ShellDialogWindow.TitleProperty, label);
+        dialog.SetValue(ShellDialogWindow.CanResizeProperty, true);
 
         dialog.KeyBindings.Add(new Input.KeyBinding()
         {
@@ -63,12 +63,12 @@ public class ShellCommand : IShellCommand
                 Gesture = new Input.KeyGesture(Input.Key.Enter)
             });
 
-            var dialogTask = dialog.ShowDialog<DialogResult>(service.GetRequiredService<MainWindow>());
+            var dialogTask = dialog.ShowDialog<DialogResult?>(service.GetRequiredService<MainWindow>());
             numberInput.Focus();
 
             var dialogResult = await dialogTask;
 
-            if (dialogResult == DialogResult.Cancel)
+            if (dialogResult is null || dialogResult == DialogResult.Cancel || dialogResult == DialogResult.No || dialogResult == DialogResult.None)
             {
                 throw new OperationCanceledException();
             }
@@ -113,12 +113,12 @@ public class ShellCommand : IShellCommand
                 Gesture = new Input.KeyGesture(Input.Key.Enter)
             });
 
-            var dialogTask = dialog.ShowDialog<DialogResult>(service.GetRequiredService<MainWindow>());
+            var dialogTask = dialog.ShowDialog<DialogResult?>(service.GetRequiredService<MainWindow>());
             textInput.Focus();
 
             var dialogResult = await dialogTask;
 
-            if (dialogResult == DialogResult.Cancel)
+            if (dialogResult is null || dialogResult == DialogResult.Cancel || dialogResult == DialogResult.No || dialogResult == DialogResult.None)
             {
                 throw new OperationCanceledException();
             }

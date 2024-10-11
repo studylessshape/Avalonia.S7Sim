@@ -84,9 +84,14 @@ public struct PathForView : IEquatable<PathForView>
         return other.Path == this.Path && other.CanDelete == this.CanDelete;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is PathForView path && Equals(path);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Path, CanDelete);
     }
 
     public static bool operator ==(PathForView left, PathForView right)
