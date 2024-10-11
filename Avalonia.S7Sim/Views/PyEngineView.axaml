@@ -15,7 +15,23 @@
                             Header="Python 路径"
                             >
         <Grid RowDefinitions="*, auto">
-            <ListBox ItemsSource="{Binding PyEngineSearchPaths}" />
+            <ListBox ItemsSource="{Binding PyEngineSearchPaths}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="*, auto">
+                            <TextBlock Text="{Binding Path}" />
+                            <!--<Button Classes="Small Danger"
+                                    Theme="{DynamicResource BorderlessButton}"
+                                    Grid.Column="1"
+                                    IsVisible="{Binding CanDelete}"
+                                    MaxHeight="10"
+                                    >
+                                <PathIcon Data="{StaticResource circle_delete}" />
+                            </Button>-->
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
             <Grid ColumnDefinitions="auto,*"
                   Grid.Row="1"
                   >

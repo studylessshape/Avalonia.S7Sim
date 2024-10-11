@@ -53,7 +53,7 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
                     }]
             });
 
-            if (files != null)
+            if (files != null && files.Count > 0)
             {
                 await Task.Run(() =>
                 {
@@ -62,12 +62,13 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
                         _scriptRunner.RunFile(file.Path.AbsolutePath);
                     }
                 });
-                MessageHelper.ShowMessage(new MessageContent { Message = "脚本执行完毕！", Icon = MessageBoxIcon.Success });
+                MessageHelper.SendLogMessage(new LogMessage { Message = "脚本执行完毕！", Level = Controls.Notifications.NotificationType.Success });
             }
         }
         catch (Exception ex)
         {
             MessageHelper.ShowMessage(new MessageContent { Message = $"执行脚本出错！\n{ex.Message}", Icon = MessageBoxIcon.Error });
+            MessageHelper.SendLogMessage(new LogMessage { Message = $"执行脚本出错！\n{ex.Message}", Level = Controls.Notifications.NotificationType.Error });
         }
     }
 

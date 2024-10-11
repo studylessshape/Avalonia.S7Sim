@@ -1,4 +1,5 @@
-﻿using Avalonia.S7Sim.ViewModels;
+﻿using Avalonia.S7Sim.Services.Shell;
+using Avalonia.S7Sim.ViewModels;
 using Avalonia.S7Sim.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,6 +32,8 @@ internal static class RegistServicesColleciton
 
         services.AddSingleton<PyEngineView>();
         services.AddSingleton<PyEngineViewModel>();
+
+        services.AddScoped<IShellCommand, ShellCommand>();
 
         return services;
     }

@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Scripting.Utils;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -27,7 +26,7 @@ public partial class PyEngineViewModel : ViewModelBase
     private readonly PyScriptRunner _pyRunner;
     private readonly IServiceProvider serviceProvider;
 
-    public ObservableCollection<string> PyEngineSearchPaths { get; } = new();
+    public ObservableCollection<PathForView> PyEngineSearchPaths { get; } = new();
 
     public PyEngineViewModel(PyScriptRunner pyRunner, IServiceProvider serviceProvider)
     {
@@ -36,7 +35,7 @@ public partial class PyEngineViewModel : ViewModelBase
         var searchPaths = _pyRunner.PyEngine.GetSearchPaths();
         if (searchPaths != null)
         {
-            PyEngineSearchPaths.AddRange(searchPaths);
+            PyEngineSearchPaths.AddRange(searchPaths.Select(p => new PathForView { Path = p, CanDelete = false }));
         }
         PyEngineSearchPaths.CollectionChanged += PyEngineSearchPaths_CollectionChanged;
     }
@@ -45,7 +44,7 @@ public partial class PyEngineViewModel : ViewModelBase
     {
         if (e.NewItems is not null)
         {
-            _pyRunner.PyEngine.SetSearchPaths(e.NewItems.Select(obj => (string)obj).ToList());
+            _pyRunner.PyEngine.SetSearchPaths(e.NewItems.Select(obj => obj).Where(obj => obj is PathForView).Select(p => ((PathForView)p).Path).ToList());
         }
     }
 
@@ -59,9 +58,9 @@ public partial class PyEngineViewModel : ViewModelBase
                 AllowMultiple = true,
             });
 
-            if (folders is not null)
+            if (folders is not null && folders.Count > 0)
             {
-                PyEngineSearchPaths.AddRange(folders.Where(f => f != null).Select(f => f.Path.AbsolutePath));
+                PyEngineSearchPaths.AddRange(folders.Where(f => f != null).Select(f => new PathForView() { Path = f.Path.AbsolutePath, CanDelete = true }).Distinct().Where(f => !PyEngineSearchPaths.Contains(f)));
             }
         }
         catch (System.Exception ex)
@@ -71,5 +70,32 @@ public partial class PyEngineViewModel : ViewModelBase
                 Message = $"打开路径出现错误！\n{ex.Message}"
             });
         }
+    }
+}
+
+
+public struct PathForView : IEquatable<PathForView>
+{
+    public string Path { get; set; }
+    public bool CanDelete { get; set; }
+
+    public bool Equals(PathForView other)
+    {
+        return other.Path == this.Path && other.CanDelete == this.CanDelete;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is PathForView path && Equals(path);
+    }
+
+    public static bool operator ==(PathForView left, PathForView right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(PathForView left, PathForView right)
+    {
+        return !(left == right);
     }
 }

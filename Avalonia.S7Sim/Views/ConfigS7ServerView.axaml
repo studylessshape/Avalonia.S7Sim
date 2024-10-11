@@ -19,6 +19,7 @@
         <converter:EnumToArrayConverter x:Key="EnumToArrayConverter" />
         <converter:ValueSubstractConverter x:Key="ValueSubStractConverter" />
         <converter:BoolReverseConverter x:Key="BoolReverseConverter" />
+        <converter:NullToVisibleConverter x:Key="NullToVisibleConverter" />
     </UserControl.Resources>
     <StackPanel Margin="10"
                 x:Name="PART_RootPanel"
@@ -118,6 +119,7 @@
                                         Theme="{DynamicResource BorderlessButton}"
                                         Command="{Binding #Root.DataContext.RemoveItemCommand}"
                                         CommandParameter="{Binding .}"
+                                        IsVisible="{Binding ., Converter={StaticResource NullToVisibleConverter}}"
                                         >
                                     <PathIcon Data="{StaticResource circle_delete}" />
                                 </Button>

@@ -27,7 +27,15 @@ namespace Avalonia.S7Sim.ViewModels
                 invoke = async (msg, title, icon, button) => await MessageBox.ShowAsync(message.Owner, msg, title!, icon, button);
             }
 
-            invoke.Invoke(message.Message, message.Title, message.Icon, message.Buttons);
+            try
+            {
+                invoke.Invoke(message.Message, message.Title, message.Icon, message.Buttons);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
     }
 }

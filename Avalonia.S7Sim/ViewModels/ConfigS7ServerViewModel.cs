@@ -16,7 +16,7 @@ public partial class ConfigS7ServerViewModel : ViewModelBase
     public ConfigS7ServerViewModel()
 #pragma warning restore CS8618
     {
-        
+
     }
 #endif
     private readonly IS7ServerService _serverService;
@@ -34,7 +34,7 @@ public partial class ConfigS7ServerViewModel : ViewModelBase
     public bool CanStart => !IsServerStart;
     private bool CanStop => IsServerStart;
 
-    public ObservableCollection<S7ServerItem> S7Servers { get; } = new();
+    public ObservableCollection<S7ServerItem?> S7Servers { get; } = [];
 
     public ConfigS7ServerViewModel(IS7ServerService serverService)
     {
@@ -56,7 +56,7 @@ public partial class ConfigS7ServerViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task StartServer()
     {
-        IsServerStart = await _serverService.StartServerAsync(Address, S7Servers.Select(item => item.ToConfig()));
+        IsServerStart = await _serverService.StartServerAsync(Address, S7Servers.Where(item => item != null).Select(item => item!.ToConfig()));
     }
 
     [RelayCommand(CanExecute = nameof(CanStop))]
