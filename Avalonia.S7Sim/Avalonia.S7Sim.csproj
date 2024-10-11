@@ -32,6 +32,6 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Semi.Avalonia" Version="11.1.0.4" />
     <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.1.0.4" />
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 </Project>
