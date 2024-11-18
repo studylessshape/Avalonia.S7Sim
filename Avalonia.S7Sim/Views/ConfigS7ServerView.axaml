@@ -16,7 +16,6 @@
         <vm:ConfigS7ServerViewModel />
     </Design.DataContext>
     <UserControl.Resources>
-        <converter:EnumToArrayConverter x:Key="EnumToArrayConverter" />
         <converter:ValueSubstractConverter x:Key="ValueSubStractConverter" />
         <converter:BoolReverseConverter x:Key="BoolReverseConverter" />
         <converter:NullToVisibleConverter x:Key="NullToVisibleConverter" />
@@ -90,7 +89,7 @@
                             <DataTemplate>
                                 <TextBlock Text="{Binding AreaKind}"
                                            VerticalAlignment="Center"
-                                           Margin="10"
+                                           HorizontalAlignment="Center"
                                            />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

@@ -33,6 +33,9 @@ internal static class RegistServicesColleciton
         services.AddSingleton<PyEngineView>();
         services.AddSingleton<PyEngineViewModel>();
 
+        services.AddSingleton<RealtimeView>();
+        services.AddSingleton<RealtimeViewModel>();
+
         services.AddScoped<IShellCommand, ShellCommand>();
 
         return services;

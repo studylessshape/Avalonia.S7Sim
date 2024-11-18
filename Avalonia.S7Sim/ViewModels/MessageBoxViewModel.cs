@@ -33,7 +33,6 @@ namespace Avalonia.S7Sim.ViewModels
             }
             catch (Exception ex)
             {
-
                 throw;
             }
         }

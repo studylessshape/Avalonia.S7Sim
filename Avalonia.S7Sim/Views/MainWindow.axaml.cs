@@ -29,6 +29,7 @@ namespace Avalonia.S7Sim.Views
             PART_LogPanel.Content = serviceProvider.GetService<LogPanel>();
             PART_DBCommand.Content = serviceProvider.GetService<S7CommandView>();
             PART_PyEngine.Content = serviceProvider.GetService<PyEngineView>();
+            PART_DBTable.Content = serviceProvider.GetService<RealtimeView>();
         }
     }
 }

@@ -1,0 +1,56 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Avalonia.S7Sim.ViewModels"
+             xmlns:models="using:Avalonia.S7Sim.Models"
+             xmlns:u="https://irihi.tech/ursa"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             x:Class="Avalonia.S7Sim.Views.RealtimeView"
+             >
+    <Design.DataContext>
+        <vm:RealtimeViewModel />
+    </Design.DataContext>
+    <Grid RowDefinitions="auto, *">
+        <StackPanel Orientation="Horizontal">
+            <Button Classes="Success"
+                    Command="{Binding AddDataItemCommand}"
+                    >
+                Add
+            </Button>
+        </StackPanel>
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding S7DataItems}"
+                  IsReadOnly="False"
+                  GridLinesVisibility="All"
+                  >
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="名称"
+                                    Binding="{Binding Name}"
+                                    />
+                <DataGridTemplateColumn Header="数据类型">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DataType}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <!--<u:EnumSelector HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            EnumType="models:DataType"
+                                            Value="{Binding DataType}"
+                                            />-->
+                            <AutoCompleteBox Text="{Binding DataType}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

@@ -47,11 +47,10 @@
                          />
                 <TabItem Header="DB 命令"
                          x:Name="PART_DBCommand"
-                         >
-                    <Button Content="Add Log"
-                            Command="{Binding AddLogCommand}"
-                            />
-                </TabItem>
+                         />
+                <TabItem Header="DB 表"
+                         x:Name="PART_DBTable"
+                         />
                 <TabItem Header="Py 引擎"
                          x:Name="PART_PyEngine"
                          />
