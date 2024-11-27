@@ -1,11 +1,10 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Platform.Storage;
+﻿using Avalonia.Platform.Storage;
 using Avalonia.S7Sim.Messages;
 using Avalonia.S7Sim.Services;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Ursa.Controls;
 
@@ -78,7 +77,7 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
         {
             if (disposing)
             {
-                
+
             }
 
             // TODO: 释放未托管的资源(未托管的对象)并重写终结器

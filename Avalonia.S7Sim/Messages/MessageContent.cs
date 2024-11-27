@@ -9,6 +9,7 @@ public class MessageContent
     public string? Title { get; set; }
     public MessageBoxIcon Icon { get; set; } = MessageBoxIcon.None;
     public MessageBoxButton Buttons { get; set; } = MessageBoxButton.OK;
+    public string? StyleClass { get; set; }
     public Window? Owner { get; set; }
     public bool Overlay { get; set; } = true;
 

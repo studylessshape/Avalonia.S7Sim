@@ -11,6 +11,7 @@
              d:DesignHeight="450"
              x:Class="Avalonia.S7Sim.Views.ConfigS7ServerView"
              x:Name="Root"
+             x:DataType="vm:ConfigS7ServerViewModel"
              >
     <Design.DataContext>
         <vm:ConfigS7ServerViewModel />

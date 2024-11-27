@@ -15,21 +15,21 @@ namespace Avalonia.S7Sim.ViewModels
 
         public void Receive(MessageContent message)
         {
-            Func<string, string?, MessageBoxIcon, MessageBoxButton, Task<MessageBoxResult>> invoke = MessageBox.ShowAsync;
+            Func<string, string?, MessageBoxIcon, MessageBoxButton, string?, Task<MessageBoxResult>> invoke = MessageBox.ShowAsync;
 
             if (message.Overlay)
             {
-                invoke = async (message, title, icon, button) => await MessageBox.ShowOverlayAsync(message, title, icon: icon, button: button);
+                invoke = async (message, title, icon, button, styleclass) => await MessageBox.ShowOverlayAsync(message, title, icon: icon, button: button);
             }
 
             if (message.Owner != null && message.Title != null)
             {
-                invoke = async (msg, title, icon, button) => await MessageBox.ShowAsync(message.Owner, msg, title!, icon, button);
+                invoke = async (msg, title, icon, button, styleclass) => await MessageBox.ShowAsync(message.Owner, msg, title!, icon, button, styleclass);
             }
 
             try
             {
-                invoke.Invoke(message.Message, message.Title, message.Icon, message.Buttons);
+                invoke.Invoke(message.Message, message.Title, message.Icon, message.Buttons, message.StyleClass);
             }
             catch (Exception ex)
             {

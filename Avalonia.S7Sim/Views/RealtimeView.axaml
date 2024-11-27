@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:Avalonia.S7Sim.ViewModels"
              xmlns:models="using:Avalonia.S7Sim.Models"
+             xmlns:converter="using:Avalonia.S7Sim.Converters"
              xmlns:u="https://irihi.tech/ursa"
              mc:Ignorable="d"
              d:DesignWidth="800"
@@ -13,6 +14,9 @@
     <Design.DataContext>
         <vm:RealtimeViewModel />
     </Design.DataContext>
+    <UserControl.Resources>
+        <converter:EnumToArrayConverter x:Key="EnumToArrayConverter" />
+    </UserControl.Resources>
     <Grid RowDefinitions="auto, *">
         <StackPanel Orientation="Horizontal">
             <Button Classes="Success"
@@ -25,7 +29,22 @@
                   ItemsSource="{Binding S7DataItems}"
                   IsReadOnly="False"
                   GridLinesVisibility="All"
+                  x:Name="PART_DBGrid"
                   >
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="删除"
+                              Command="{Binding RemoveSelectsCommand}"
+                              />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="SelectionChanged">
+                    <InvokeCommandAction Command="{Binding SelectChangedCommand}"
+                                         PassEventArgsToCommand="True"
+                                         />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="名称"
                                     Binding="{Binding Name}"
@@ -46,7 +65,10 @@
                                             EnumType="models:DataType"
                                             Value="{Binding DataType}"
                                             />-->
-                            <AutoCompleteBox Text="{Binding DataType}" />
+                            <AutoCompleteBox Text="{Binding DataType}"
+                                             FilterMode="Contains"
+                                             ItemsSource="{Binding Source={x:Type models:DataType}, Converter={StaticResource EnumToArrayConverter}}"
+                                             />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
