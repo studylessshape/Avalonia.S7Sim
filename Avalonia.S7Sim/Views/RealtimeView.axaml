@@ -41,7 +41,7 @@
             <Interaction.Behaviors>
                 <EventTriggerBehavior EventName="SelectionChanged">
                     <InvokeCommandAction Command="{Binding SelectChangedCommand}"
-                                         PassEventArgsToCommand="True"
+                                         CommandParameter="{Binding #PART_DBGrid.SelectedItems}"
                                          />
                 </EventTriggerBehavior>
             </Interaction.Behaviors>

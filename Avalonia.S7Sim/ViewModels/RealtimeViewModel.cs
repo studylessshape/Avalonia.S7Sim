@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using System.Collections;
+using Avalonia.Controls;
 using Avalonia.S7Sim.Models.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -13,8 +14,8 @@ namespace Avalonia.S7Sim.ViewModels;
 public partial class RealtimeViewModel : ViewModelBase, IRecipient<UpdateRealtimeOffsetCollectionEvent>
 {
     public ObservableCollection<S7DataItem> S7DataItems { get; set; } = new();
-    private List<S7DataItem> SelectS7Items { get; set; } = new();
-    private bool CanDelete => SelectS7Items.Any();
+    public IList? SelectedItems { get; set; }
+    private bool CanDelete => SelectedItems?.Count > 0;
 
     [RelayCommand]
     public void AddDataItem()
@@ -23,28 +24,24 @@ public partial class RealtimeViewModel : ViewModelBase, IRecipient<UpdateRealtim
     }
 
     [RelayCommand]
-    private void SelectChanged(SelectionChangedEventArgs eventArgs)
+    private void SelectChanged(IList source)
     {
-        SelectS7Items.AddRange(eventArgs.AddedItems.Select(o => (S7DataItem)o));
-        foreach (var obj in eventArgs.RemovedItems)
-        {
-            if (obj != null)
-            {
-                var item = (S7DataItem)obj;
-                SelectS7Items.Remove(item);
-            }
-        }
-        OnPropertyChanged(nameof(CanDelete));
+        SelectedItems = source;
     }
 
     [RelayCommand(CanExecute = nameof(CanDelete))]
     private void RemoveSelects()
     {
-        var list = new List<S7DataItem>(SelectS7Items);
+        var list = new List<S7DataItem>();
+        if (SelectedItems?.Count > 0)
+        {
+            list.AddRange(SelectedItems.Select(o => (S7DataItem)o));
+        }
         foreach (var item in list)
         {
             S7DataItems.Remove(item);
         }
+        SelectedItems?.Clear();
     }
 
     public void Receive(UpdateRealtimeOffsetCollectionEvent message)
