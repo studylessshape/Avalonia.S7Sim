@@ -3,6 +3,7 @@ using Avalonia.S7Sim.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using Avalonia.S7Sim.Exceptions;
 
 namespace Avalonia.S7Sim.ViewModels;
 
@@ -13,7 +14,6 @@ public partial class OperationsViewModel : ViewModelBase
     public OperationsViewModel()
 #pragma warning restore CS8618
     {
-
     }
 #endif
 
@@ -24,21 +24,17 @@ public partial class OperationsViewModel : ViewModelBase
         this._serverService = s7ServerService;
     }
 
-    [ObservableProperty]
-    private int _targetDB;
+    [ObservableProperty] private int _targetDB;
 
-    [ObservableProperty]
-    private int _targetPos;
+    [ObservableProperty] private int _targetPos;
 
     #region Bit Read and Write
-    [ObservableProperty]
-    private bool _bitToWrite;
 
-    [ObservableProperty]
-    private bool _bitRead;
+    [ObservableProperty] private bool _bitToWrite;
 
-    [ObservableProperty]
-    private byte _targetBitPos;
+    [ObservableProperty] private bool _bitRead;
+
+    [ObservableProperty] private byte _targetBitPos;
 
     [RelayCommand]
     private void WriteBit()
@@ -50,6 +46,10 @@ public partial class OperationsViewModel : ViewModelBase
         catch (IndexOutOfRangeException)
         {
             MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
         }
     }
 
@@ -64,15 +64,19 @@ public partial class OperationsViewModel : ViewModelBase
         {
             MessageHelper.ShowMessage("请求位置超过 DB 块大小");
         }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
+        }
     }
+
     #endregion
 
     #region Short Read And Write
-    [ObservableProperty]
-    private short _shortToWrite;
 
-    [ObservableProperty]
-    private short _shortRead;
+    [ObservableProperty] private short _shortToWrite;
+
+    [ObservableProperty] private short _shortRead;
 
     [RelayCommand]
     private void WriteShort()
@@ -84,6 +88,10 @@ public partial class OperationsViewModel : ViewModelBase
         catch (IndexOutOfRangeException)
         {
             MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
         }
     }
 
@@ -98,15 +106,19 @@ public partial class OperationsViewModel : ViewModelBase
         {
             MessageHelper.ShowMessage("请求位置超过 DB 块大小");
         }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
+        }
     }
+
     #endregion
 
     #region UInt Read And Write
-    [ObservableProperty]
-    private uint _uIntToWrite;
 
-    [ObservableProperty]
-    private uint _uIntRead;
+    [ObservableProperty] private uint _uIntToWrite;
+
+    [ObservableProperty] private uint _uIntRead;
 
     [RelayCommand]
     private void WriteUInt()
@@ -119,21 +131,36 @@ public partial class OperationsViewModel : ViewModelBase
         {
             MessageHelper.ShowMessage("请求位置超过 DB 块大小");
         }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
+        }
     }
 
     [RelayCommand]
     private void ReadUInt()
     {
-        UIntRead = _serverService.ReadUInt32(TargetDB, TargetPos);
+        try
+        {
+            UIntRead = _serverService.ReadUInt32(TargetDB, TargetPos);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
+        }
     }
+
     #endregion
 
     #region ULong Read And Write
-    [ObservableProperty]
-    private ulong _uLongToWrite;
 
-    [ObservableProperty]
-    private ulong _uLongRead;
+    [ObservableProperty] private ulong _uLongToWrite;
+
+    [ObservableProperty] private ulong _uLongRead;
 
     [RelayCommand]
     private void WriteULong()
@@ -145,6 +172,10 @@ public partial class OperationsViewModel : ViewModelBase
         catch (IndexOutOfRangeException)
         {
             MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
         }
     }
 
@@ -159,15 +190,19 @@ public partial class OperationsViewModel : ViewModelBase
         {
             MessageHelper.ShowMessage("请求位置超过 DB 块大小");
         }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
+        }
     }
+
     #endregion
 
     #region Real Read And Write
-    [ObservableProperty]
-    private float _realToWrite;
 
-    [ObservableProperty]
-    private ulong _realRead;
+    [ObservableProperty] private float _realToWrite;
+
+    [ObservableProperty] private ulong _realRead;
 
     [RelayCommand]
     private void WriteReal()
@@ -179,6 +214,10 @@ public partial class OperationsViewModel : ViewModelBase
         catch (IndexOutOfRangeException)
         {
             MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
         }
     }
 
@@ -193,18 +232,21 @@ public partial class OperationsViewModel : ViewModelBase
         {
             MessageHelper.ShowMessage("请求位置超过 DB 块大小");
         }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
+        }
     }
+
     #endregion
 
     #region String Read And Write
-    [ObservableProperty]
-    private string _stringToWrite = "";
 
-    [ObservableProperty]
-    private string? _stringRead;
+    [ObservableProperty] private string _stringToWrite = "";
 
-    [ObservableProperty]
-    private int _stringMaxLength = 256;
+    [ObservableProperty] private string? _stringRead;
+
+    [ObservableProperty] private int _stringMaxLength = 256;
 
     [RelayCommand]
     private void WriteString()
@@ -213,9 +255,13 @@ public partial class OperationsViewModel : ViewModelBase
         {
             _serverService.WriteString(TargetDB, TargetPos, StringMaxLength, StringToWrite);
         }
-        catch (IndexOutOfRangeException) 
-        { 
-            MessageHelper.ShowMessage("请求位置超过 DB 块大小"); 
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
         }
     }
 
@@ -226,9 +272,13 @@ public partial class OperationsViewModel : ViewModelBase
         {
             StringRead = _serverService.ReadString(TargetDB, TargetPos);
         }
-        catch (IndexOutOfRangeException) 
-        { 
-            MessageHelper.ShowMessage("请求位置超过 DB 块大小"); 
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
         }
     }
     #endregion

@@ -15,14 +15,16 @@ public class DataItem
     private int? _length;
     public int? Length
     {
-        get => DataType == DataType.String || DataType == DataType.Array ? null : _length;
+        // get => DataType == DataType.String || DataType == DataType.Array ? null : _length;
+        get => null;
         set => _length = value;
     }
 
     private DataType? _subType;
     public DataType? SubType
     {
-        get => DataType != DataType.Array ? null : _subType;
+        // get => DataType != DataType.Array ? null : _subType;
+        get => null;
         set => _subType = value;
     }
 }

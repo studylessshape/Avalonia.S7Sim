@@ -10,6 +10,12 @@ public interface IS7DataBlockService
 
     short ReadShort(int dbNumber, int pos);
     void WriteShort(int dbNumber, int pos, short value);
+    
+    int ReadInt32(int dbNumber, int pos);
+    void WriteInt32(int dbNumber, int pos, int value);
+    
+    long ReadLong(int dbNumber, int pos);
+    void WriteLong(int dbNumber, int pos, long value);
 
     uint ReadUInt32(int dbNumber, int pos);
     void WriteUInt32(int dbNumber, int pos, uint value);
@@ -19,6 +25,9 @@ public interface IS7DataBlockService
 
     float ReadReal(int dbNumber, int pos);
     void WriteReal(int dbNumber, int pos, float real);
+    
+    double ReadDouble(int dbNumber, int pos);
+    void WriteDouble(int dbNumber, int pos, double real);
 
     string ReadString(int dbNumber, int offset);
     void WriteString(int dbNumber, int offset, int maxlen, string str);

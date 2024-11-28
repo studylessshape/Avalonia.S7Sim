@@ -4,6 +4,7 @@ using FutureTech.Snap7;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using Avalonia.S7Sim.Exceptions;
 
 namespace Avalonia.S7Sim.Services;
 
@@ -18,14 +19,19 @@ public class S7DataBlockService : IS7DataBlockService
         this._serverService = s7ServerService;
     }
 
+    private RunningServerItem? FindDbFromDbNumber(int dbNumber)
+    {
+        return _serverService.RunningItems
+            .FirstOrDefault(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber);
+    }
+
     #region Byte
     public byte ReadByte(int dbNumber, int pos)
     {
         var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return default;
+            throw new DbNumberNotExistException(dbNumber);
         }
 
         var buffer = config.Bytes;
@@ -40,8 +46,7 @@ public class S7DataBlockService : IS7DataBlockService
         var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return;
+            throw new DbNumberNotExistException(dbNumber);
         }
         var buffer = config.Bytes;
 
@@ -52,11 +57,10 @@ public class S7DataBlockService : IS7DataBlockService
     #region Short
     public short ReadShort(int dbNumber, int pos)
     {
-        var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
+        var config = FindDbFromDbNumber(dbNumber);
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return default;
+            throw new DbNumberNotExistException(dbNumber);
         }
 
         var buffer = config.Bytes;
@@ -68,11 +72,10 @@ public class S7DataBlockService : IS7DataBlockService
 
     public void WriteShort(int dbNumber, int pos, short value)
     {
-        var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
+        var config = FindDbFromDbNumber(dbNumber);
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return;
+            throw new DbNumberNotExistException(dbNumber);
         }
         var buffer = config.Bytes;
 
@@ -80,6 +83,62 @@ public class S7DataBlockService : IS7DataBlockService
     }
     #endregion
 
+    #region Int32
+    public int ReadInt32(int dbNumber, int pos)
+    {
+        var config = FindDbFromDbNumber(dbNumber);
+        if (config == null)
+        {
+            throw new DbNumberNotExistException(dbNumber);
+        }
+
+        var buffer = config.Bytes;
+
+        var val = S7.GetDIntAt(buffer, pos);
+        return val;
+    }
+
+    public void WriteInt32(int dbNumber, int pos, int value)
+    {
+        var config = FindDbFromDbNumber(dbNumber);
+        if (config == null)
+        {
+            throw new DbNumberNotExistException(dbNumber);
+        }
+        
+        var buffer = config.Bytes;
+
+        S7.SetDIntAt(buffer, pos, value);
+    }
+    #endregion
+
+    #region Long
+    public long ReadLong(int dbNumber, int pos)
+    {
+        var config = FindDbFromDbNumber(dbNumber);
+        if (config == null)
+        {
+            throw new DbNumberNotExistException(dbNumber);
+        }
+
+        var buffer = config.Bytes;
+
+        var val = S7.GetLIntAt(buffer, pos);
+        return val;
+    }
+
+    public void WriteLong(int dbNumber, int pos, long value)
+    {
+        var config = FindDbFromDbNumber(dbNumber);
+        if (config == null)
+        {
+            throw new DbNumberNotExistException(dbNumber);
+        }
+
+        var buffer = config.Bytes;
+        S7.SetLIntAt(buffer, pos, value);
+    }
+    #endregion
 
     #region Bit
     public bool ReadBit(int dbNumber, int offset, byte bit)
@@ -87,8 +146,7 @@ public class S7DataBlockService : IS7DataBlockService
         var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return default;
+            throw new DbNumberNotExistException(dbNumber);
         }
 
         var buffer = config.Bytes;
@@ -103,8 +161,7 @@ public class S7DataBlockService : IS7DataBlockService
         var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return;
+            throw new DbNumberNotExistException(dbNumber);
         }
         var buffer = config.Bytes;
 
@@ -118,8 +175,7 @@ public class S7DataBlockService : IS7DataBlockService
         var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return;
+            throw new DbNumberNotExistException(dbNumber);
         }
         var buffer = config.Bytes;
         S7.SetStringAt(buffer, offset, maxlen, str);
@@ -145,8 +201,7 @@ public class S7DataBlockService : IS7DataBlockService
         var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return;
+            throw new DbNumberNotExistException(dbNumber);
         }
         var buffer = config.Bytes;
         S7.SetRealAt(buffer, pos, real);
@@ -157,12 +212,40 @@ public class S7DataBlockService : IS7DataBlockService
         var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return default;
+            throw new DbNumberNotExistException(dbNumber);
         }
         var buffer = config.Bytes;
         var real = S7.GetRealAt(buffer, pos);
         return real;
+    }
+
+    #endregion
+
+    #region Double
+    public double ReadDouble(int dbNumber, int pos)
+    {
+        var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
+        if (config == null)
+        {
+            throw new DbNumberNotExistException(dbNumber);
+        }
+
+        var buffer = config.Bytes;
+        
+        return S7.GetLRealAt(buffer, pos);
+    }
+    
+    public void WriteDouble(int dbNumber, int pos, double real)
+    {
+        var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
+        if (config == null)
+        {
+            throw new DbNumberNotExistException(dbNumber);
+        }
+
+        var buffer = config.Bytes;
+        
+        S7.SetLRealAt(buffer, pos, real);
     }
 
     #endregion
@@ -173,8 +256,7 @@ public class S7DataBlockService : IS7DataBlockService
         var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return default;
+            throw new DbNumberNotExistException(dbNumber);
         }
 
         var buffer = config.Bytes;
@@ -182,15 +264,13 @@ public class S7DataBlockService : IS7DataBlockService
         var val = S7.GetULIntAt(buffer, pos);
         return val;
     }
-
-
+    
     public void WriteULong(int dbNumber, int pos, ulong value)
     {
         var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return;
+            throw new DbNumberNotExistException(dbNumber);
         }
         var buffer = config.Bytes;
 
@@ -204,8 +284,7 @@ public class S7DataBlockService : IS7DataBlockService
         var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return default;
+            throw new DbNumberNotExistException(dbNumber);
         }
 
         var buffer = config.Bytes;
@@ -219,8 +298,7 @@ public class S7DataBlockService : IS7DataBlockService
         var config = _serverService.RunningItems.Where(i => i.AreaKind == AreaKind.DB && i.BlockNumber == dbNumber).FirstOrDefault();
         if (config == null)
         {
-            MessageHelper.ShowMessage($"DBNumber={dbNumber} 不存在！");
-            return;
+            throw new DbNumberNotExistException(dbNumber);
         }
         var buffer = config.Bytes;
 

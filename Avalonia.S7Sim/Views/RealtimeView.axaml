@@ -10,65 +10,83 @@
              d:DesignWidth="800"
              d:DesignHeight="450"
              x:Class="Avalonia.S7Sim.Views.RealtimeView"
-             >
+             x:Name="Root">
     <Design.DataContext>
         <vm:RealtimeViewModel />
     </Design.DataContext>
     <UserControl.Resources>
         <converter:EnumToArrayConverter x:Key="EnumToArrayConverter" />
+        <converter:ItemIndexConverter x:Key="ItemIndexConverter"></converter:ItemIndexConverter>
     </UserControl.Resources>
     <Grid RowDefinitions="auto, *">
         <StackPanel Orientation="Horizontal">
-            <Button Classes="Success"
-                    Command="{Binding AddDataItemCommand}"
-                    >
-                Add
-            </Button>
+            <u:NumericIntUpDown Value="{Binding DbNumber}" MinWidth="80"></u:NumericIntUpDown>
+            <Button Command="{Binding StartScanCommand}" Classes="Primary" Theme="{DynamicResource SolidButton}">监看</Button>
+            <Button Command="{Binding StopScanCommand}" Classes="Danger" Theme="{DynamicResource SolidButton}">停止</Button>
         </StackPanel>
         <DataGrid Grid.Row="1"
                   ItemsSource="{Binding S7DataItems}"
                   IsReadOnly="False"
                   GridLinesVisibility="All"
-                  x:Name="PART_DBGrid"
-                  >
+                  CanUserResizeColumns="True"
+                  x:Name="PART_DBGrid">
             <DataGrid.ContextMenu>
                 <ContextMenu>
+                    <ContextMenu.Resources>
+                        <x:Int32 x:Key="Int32Zero">0</x:Int32>
+                    </ContextMenu.Resources>
+                    <MenuItem Header="插入" Command="{Binding AddDataItemCommand}" />
+                    <MenuItem Header="插入末尾" Command="{Binding AddDataItemCommand}" />
+                    <MenuItem Header="插入开始" Command="{Binding InsertDataItemCommand}"
+                              CommandParameter="{Binding Source={StaticResource Int32Zero}}">
+                    </MenuItem>
                     <MenuItem Header="删除"
-                              Command="{Binding RemoveSelectsCommand}"
-                              />
+                              Command="{Binding RemoveSelectsCommand}" />
                 </ContextMenu>
             </DataGrid.ContextMenu>
             <Interaction.Behaviors>
                 <EventTriggerBehavior EventName="SelectionChanged">
                     <InvokeCommandAction Command="{Binding SelectChangedCommand}"
-                                         CommandParameter="{Binding #PART_DBGrid.SelectedItems}"
-                                         />
+                                         CommandParameter="{Binding #PART_DBGrid.SelectedItems}" />
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
             <DataGrid.Columns>
+                <DataGridTemplateColumn Header="序号" IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding Converter="{StaticResource ItemIndexConverter}">
+                                        <Binding Path="#Root.((vm:RealtimeViewModel)DataContext).S7DataItems">
+                                        </Binding>
+                                        <Binding Path=".">
+                                        </Binding>
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="名称"
-                                    Binding="{Binding Name}"
-                                    />
+                                    Binding="{Binding Name}" />
                 <DataGridTemplateColumn Header="数据类型">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding DataType}"
                                        VerticalAlignment="Center"
-                                       HorizontalAlignment="Center"
-                                       />
+                                       HorizontalAlignment="Center" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                     <DataGridTemplateColumn.CellEditingTemplate>
                         <DataTemplate>
-                            <!--<u:EnumSelector HorizontalAlignment="Center"
+                            <u:EnumSelector HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             EnumType="models:DataType"
-                                            Value="{Binding DataType}"
-                                            />-->
-                            <AutoCompleteBox Text="{Binding DataType}"
-                                             FilterMode="Contains"
-                                             ItemsSource="{Binding Source={x:Type models:DataType}, Converter={StaticResource EnumToArrayConverter}}"
-                                             />
+                                            Value="{Binding DataType}" />
+                            <!-- <AutoCompleteBox Text="{Binding DataType}" -->
+                            <!--                  FilterMode="Contains" -->
+                            <!--                  ItemsSource="{Binding Source={x:Type models:DataType}, Converter={StaticResource EnumToArrayConverter}}" -->
+                            <!--                  /> -->
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
