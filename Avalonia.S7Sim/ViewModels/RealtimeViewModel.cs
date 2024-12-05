@@ -55,6 +55,7 @@ public partial class RealtimeViewModel : ViewModelBase, IRecipient<UpdateRealtim
     public void InsertDataItem(int index)
     {
         S7DataItems.Insert(index, new S7DataItem());
+        OnPropertyChanged(nameof(S7DataItems));
     }
 
     [RelayCommand]
@@ -81,6 +82,7 @@ public partial class RealtimeViewModel : ViewModelBase, IRecipient<UpdateRealtim
         }
 
         SelectedItems?.Clear();
+        OnPropertyChanged(nameof(S7DataItems));
     }
 
     [RelayCommand]

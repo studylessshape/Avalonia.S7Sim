@@ -30,9 +30,9 @@ public class ItemIndexConverter : IMultiValueConverter
             return null;
         }
         
-        values.Remove(allItems);
+        //values.Remove(allItems);
         
-        var oneItem = values.FirstOrDefault();
+        var oneItem = values.Where(o => o != allItems).FirstOrDefault();
 
         if (oneItem == null || !allItems.Contains(oneItem))
         {
