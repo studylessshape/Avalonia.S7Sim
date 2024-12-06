@@ -3,16 +3,16 @@ using Avalonia.S7Sim.ViewModels;
 
 namespace Avalonia.S7Sim.Views;
 
-public partial class PyEngineView : UserControl
+public partial class ScriptsView : UserControl
 {
 #if DEBUG
-    public PyEngineView()
+    public ScriptsView()
     {
         InitializeComponent();
     }
 #endif
 
-    public PyEngineView(PyEngineViewModel viewModel)
+    public ScriptsView(ScriptsViewModel viewModel)
     {
         DataContext = viewModel;
         InitializeComponent();

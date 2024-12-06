@@ -6,16 +6,16 @@
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
-             x:Class="Avalonia.S7Sim.Views.PyEngineView"
+             x:Class="Avalonia.S7Sim.Views.ScriptsView"
              >
     <Design.DataContext>
-        <vm:PyEngineViewModel />
+        <vm:ScriptsViewModel />
     </Design.DataContext>
     <HeaderedContentControl Theme="{DynamicResource GroupBox}"
                             Header="Python 路径"
                             >
         <Grid RowDefinitions="*, auto">
-            <ListBox ItemsSource="{Binding PyEngineSearchPaths}">
+            <ListBox ItemsSource="{Binding EngineSearchPaths}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="*, auto">

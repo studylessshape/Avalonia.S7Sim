@@ -1,4 +1,4 @@
-﻿namespace Avalonia.S7Sim.Models;
+﻿namespace S7Sim.Services.Models;
 
 public enum AreaKind
 {

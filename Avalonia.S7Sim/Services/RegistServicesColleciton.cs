@@ -3,6 +3,10 @@ using Avalonia.S7Sim.ViewModels;
 using Avalonia.S7Sim.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using S7Sim.Services.DB;
+using S7Sim.Services.MB;
+using S7Sim.Services.Scripts;
+using S7Sim.Services.Server;
 using System;
 
 namespace Avalonia.S7Sim.Services;
@@ -30,8 +34,8 @@ internal static class RegistServicesColleciton
         services.AddScoped<OperationsViewModel>();
         services.AddSingleton<MessageBoxViewModel>();
 
-        services.AddSingleton<PyEngineView>();
-        services.AddSingleton<PyEngineViewModel>();
+        services.AddSingleton<ScriptsView>();
+        services.AddSingleton<ScriptsViewModel>();
 
         services.AddSingleton<RealtimeView>();
         services.AddSingleton<RealtimeViewModel>();
@@ -56,7 +60,7 @@ internal static class RegistServicesColleciton
         services.AddSingleton<IS7DataBlockService, S7DataBlockService>();
         services.AddSingleton<IS7MBService, S7MBService>();
 
-        services.AddSingleton<PyScriptRunner>();
+        services.AddSingleton<IScriptRunner, PyScriptRunner>();
 
         services.RegistViews();
     }

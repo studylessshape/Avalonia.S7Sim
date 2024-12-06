@@ -5,6 +5,10 @@ VisualStudioVersion = 17.11.35219.272
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia.S7Sim", "Avalonia.S7Sim\Avalonia.S7Sim.csproj", "{5ADFF894-8F71-4DF7-BFDF-890B2E643CA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S7Sim.Services", "S7Sim.Services\S7Sim.Services.csproj", "{08FC494C-945E-4354-B195-3EDCDD3E2F9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S7Sim.Utils", "S7Sim.Utils\S7Sim.Utils.csproj", "{1AB0BD75-1864-42AC-9263-2155771FD9DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{5ADFF894-8F71-4DF7-BFDF-890B2E643CA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ADFF894-8F71-4DF7-BFDF-890B2E643CA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5ADFF894-8F71-4DF7-BFDF-890B2E643CA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08FC494C-945E-4354-B195-3EDCDD3E2F9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08FC494C-945E-4354-B195-3EDCDD3E2F9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08FC494C-945E-4354-B195-3EDCDD3E2F9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08FC494C-945E-4354-B195-3EDCDD3E2F9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AB0BD75-1864-42AC-9263-2155771FD9DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AB0BD75-1864-42AC-9263-2155771FD9DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AB0BD75-1864-42AC-9263-2155771FD9DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AB0BD75-1864-42AC-9263-2155771FD9DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

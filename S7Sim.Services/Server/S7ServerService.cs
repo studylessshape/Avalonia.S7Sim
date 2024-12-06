@@ -1,29 +1,22 @@
-﻿using Avalonia.S7Sim.Messages;
-using Avalonia.S7Sim.Models;
-using Microsoft.Extensions.Logging;
+﻿using S7Sim.Services.Models;
+using S7Sim.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Avalonia.S7Sim.Services;
+namespace S7Sim.Services.Server;
 
 public class S7ServerService : IDisposable, IS7ServerService
 {
-    private readonly IList<RunningServerItem> _runningItems = [];
-    private readonly ILogger<S7ServerService> _logger;
+    private readonly IList<RunningServerItem> _runningItems = new List<RunningServerItem>();
 
     public IList<RunningServerItem> RunningItems => _runningItems;
 
     protected virtual FutureTech.Snap7.S7Server? S7Server { get; set; }
 
-    public S7ServerService(ILogger<S7ServerService> logger)
-    {
-        this._logger = logger;
-    }
-
-    public Task<bool> StartServerAsync(IPAddress? address, IEnumerable<AreaConfig> areaConfigs)
+    public async Task<Result<ValueTuple, string>> StartServerAsync(IPAddress? address, IEnumerable<AreaConfig> areaConfigs)
     {
         try
         {
@@ -31,8 +24,7 @@ public class S7ServerService : IDisposable, IS7ServerService
 
             if (areaConfigs == null || areaConfigs.Count() == 0)
             {
-                MessageHelper.ShowMessage("当前 DBConfigs 为 NULL !");
-                return Task.FromResult(false);
+                return "当前 DBConfigs 为 NULL !";
             }
 
             _runningItems.Clear();
@@ -60,39 +52,39 @@ public class S7ServerService : IDisposable, IS7ServerService
                 }
             }
             S7Server.StartTo(address?.ToString() ?? "127.0.0.1");
-            MessageHelper.SendLogMessage(new LogMessage { Message = "[+]服务启动..." });
+            //MessageHelper.SendLogMessage(new LogMessage { Message = "[+]服务启动..." });
 
-            return Task.FromResult(true);
+            return ValueTuple.Create();
         }
         catch (Exception ex)
         {
             var msg = $"启动服务器出错：{ex.Message}";
-            _logger.LogError(msg);
-            MessageHelper.ShowMessage(msg);
-            return Task.FromResult(false);
+            //_logger.LogError(msg);
+            //MessageHelper.ShowMessage(msg);
+            return msg;
         }
     }
 
-    public Task<bool> StopServerAsync()
+    public async Task<Result<ValueTuple, string>> StopServerAsync()
     {
         try
         {
             S7Server?.Stop();
             S7Server = null;
-            MessageHelper.SendLogMessage(new LogMessage() { Message = "[!]服务停止...", Level = Controls.Notifications.NotificationType.Warning });
-            return Task.FromResult(true);
+            //MessageHelper.SendLogMessage(new LogMessage() { Message = "[!]服务停止...", Level = Controls.Notifications.NotificationType.Warning });
+            return ValueTuple.Create();
         }
         catch (Exception ex)
         {
             var msg = $"停止服务器出错：{ex.Message}";
-            _logger.LogError(msg);
-            MessageHelper.ShowMessage(msg);
-            return Task.FromResult(false);
+            //_logger.LogError(msg);
+            //MessageHelper.ShowMessage(msg);
+            return msg;
         }
     }
 
     public void Dispose()
     {
-        _ = this.StopServerAsync();
+        _ = StopServerAsync();
     }
 }

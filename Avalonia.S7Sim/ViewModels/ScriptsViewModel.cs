@@ -1,9 +1,9 @@
 ﻿using Avalonia.Platform.Storage;
 using Avalonia.S7Sim.Messages;
-using Avalonia.S7Sim.Services;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Scripting.Utils;
+using S7Sim.Services.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,39 +13,39 @@ using System.Threading.Tasks;
 
 namespace Avalonia.S7Sim.ViewModels;
 
-public partial class PyEngineViewModel : ViewModelBase
+public partial class ScriptsViewModel : ViewModelBase
 {
 #if DEBUG
 #pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑添加 "required" 修饰符或声明为可为 null。
-    public PyEngineViewModel()
+    public ScriptsViewModel()
 #pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑添加 "required" 修饰符或声明为可为 null。
     {
 
     }
 #endif
 
-    private readonly PyScriptRunner _pyRunner;
+    private readonly IScriptRunner _scriptRunner;
     private readonly IServiceProvider serviceProvider;
 
-    public ObservableCollection<PathForView> PyEngineSearchPaths { get; } = new();
+    public ObservableCollection<PathForView> EngineSearchPaths { get; } = new();
 
-    public PyEngineViewModel(PyScriptRunner pyRunner, IServiceProvider serviceProvider)
+    public ScriptsViewModel(IScriptRunner scriptRunner, IServiceProvider serviceProvider)
     {
-        this._pyRunner = pyRunner;
+        this._scriptRunner = scriptRunner;
         this.serviceProvider = serviceProvider;
-        var searchPaths = _pyRunner.PyEngine.GetSearchPaths();
+        var searchPaths = _scriptRunner.Engine.GetSearchPaths();
         if (searchPaths != null)
         {
-            PyEngineSearchPaths.AddRange(searchPaths.Select(p => new PathForView { Path = p, CanDelete = false }));
+            EngineSearchPaths.AddRange(searchPaths.Select(p => new PathForView { Path = p, CanDelete = false }));
         }
-        PyEngineSearchPaths.CollectionChanged += PyEngineSearchPaths_CollectionChanged;
+        EngineSearchPaths.CollectionChanged += PyEngineSearchPaths_CollectionChanged;
 
-        if (PyEngineSearchPaths.Count <= 1)
+        if (EngineSearchPaths.Count <= 1)
         {
             var processPath = Path.GetDirectoryName(Environment.ProcessPath);
             if (!string.IsNullOrEmpty(processPath))
             {
-                PyEngineSearchPaths.AddRange([new PathForView()
+                EngineSearchPaths.AddRange([new PathForView()
                 {
                     Path = Path.Combine(processPath, "lib"),
                     CanDelete = false
@@ -63,7 +63,7 @@ public partial class PyEngineViewModel : ViewModelBase
     {
         if (e.NewItems is not null)
         {
-            _pyRunner.PyEngine.SetSearchPaths(e.NewItems.Select(obj => obj).Where(obj => obj is PathForView).Select(p => ((PathForView)p).Path).ToList());
+            _scriptRunner.Engine.SetSearchPaths(e.NewItems.Select(obj => obj).Where(obj => obj is PathForView).Select(p => ((PathForView)p).Path).ToList());
         }
     }
 
@@ -79,7 +79,7 @@ public partial class PyEngineViewModel : ViewModelBase
 
             if (folders is not null && folders.Count > 0)
             {
-                PyEngineSearchPaths.AddRange(folders.Where(f => f != null).Select(f => new PathForView() { Path = f.Path.AbsolutePath, CanDelete = true }).Distinct().Where(f => !PyEngineSearchPaths.Contains(f)));
+                EngineSearchPaths.AddRange(folders.Where(f => f != null).Select(f => new PathForView() { Path = f.Path.AbsolutePath, CanDelete = true }).Distinct().Where(f => !EngineSearchPaths.Contains(f)));
             }
         }
         catch (System.Exception ex)

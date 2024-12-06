@@ -1,12 +1,11 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using Avalonia.S7Sim.Messages;
 using Avalonia.S7Sim.Views;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using Avalonia.Controls.Notifications;
-using Microsoft.Extensions.Logging;
 using Ursa.Controls;
 
 namespace Avalonia.S7Sim.Services.Shell;
@@ -149,5 +148,10 @@ public class ShellCommand : IShellCommand
         {
             MessageHelper.SendLogMessage(new LogMessage() { Level = level, Message = log });
         });
+    }
+
+    public void SendLogMessage(string log, int level = 0)
+    {
+        SendLogMessage(log, (NotificationType)level);
     }
 }

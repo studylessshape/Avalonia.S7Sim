@@ -35,4 +35,14 @@
     <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.2.1" />
     <PackageReference Include="System.Text.Json" Version="9.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\S7Sim.Services\S7Sim.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\ScriptsView.axaml.cs">
+      <DependentUpon>ScriptsView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace Avalonia.S7Sim.Services;
+﻿namespace S7Sim.Services.MB;
 
 public interface IS7MBService
 {

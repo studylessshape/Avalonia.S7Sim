@@ -4,9 +4,7 @@ using Avalonia.S7Sim.Services;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.S7Sim.Views;
 using Ursa.Controls;
 
 namespace Avalonia.S7Sim.ViewModels;
@@ -52,7 +50,7 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
                         MimeTypes = ["text/plain"]
                     }]
             });
-        
+
             if (files != null && files.Count > 0)
             {
                 await Task.Run(() =>

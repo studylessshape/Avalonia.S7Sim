@@ -1,7 +1,8 @@
-﻿using Avalonia.S7Sim.Models;
-using Avalonia.S7Sim.Services;
+﻿using Avalonia.S7Sim.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using S7Sim.Services.Models;
+using S7Sim.Services.Server;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
@@ -56,13 +57,22 @@ public partial class ConfigS7ServerViewModel : ViewModelBase
     [RelayCommand(CanExecute = nameof(CanStart))]
     private async Task StartServer()
     {
-        IsServerStart = await _serverService.StartServerAsync(Address, S7Servers.Where(item => item != null).Select(item => item!.ToConfig()));
+        var startRes = await _serverService.StartServerAsync(Address, S7Servers.Where(item => item != null).Select(item => item!.ToConfig()));
+        IsServerStart = startRes.IsOk;
+        if (startRes.IsError)
+        {
+            MessageHelper.ShowMessage(new MessageContent { Message = startRes.ErrorValue, Icon = Ursa.Controls.MessageBoxIcon.Error });
+        }
     }
 
     [RelayCommand(CanExecute = nameof(CanStop))]
     private async Task StopServer()
     {
-        await _serverService.StopServerAsync();
+        var stopRes = await _serverService.StopServerAsync();
+        if (stopRes.IsOk)
+        {
+            MessageHelper.ShowMessage(new MessageContent { Message = stopRes.ErrorValue, Icon = Ursa.Controls.MessageBoxIcon.Error });
+        }
         IsServerStart = false;
     }
 }

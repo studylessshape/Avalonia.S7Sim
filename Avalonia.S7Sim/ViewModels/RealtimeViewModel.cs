@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections;
-using Avalonia.Controls;
-using Avalonia.S7Sim.Models.Events;
+﻿using Avalonia.S7Sim.Exceptions;
+using Avalonia.S7Sim.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Scripting.Utils;
+using S7Sim.Services.DB;
+using S7Sim.Services.Models;
+using S7Sim.Services.Models.Events;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Avalonia.S7Sim.Exceptions;
-using Avalonia.S7Sim.Messages;
-using Avalonia.S7Sim.Models;
-using Avalonia.S7Sim.Services;
 
 namespace Avalonia.S7Sim.ViewModels;
 
@@ -109,7 +106,11 @@ public partial class RealtimeViewModel : ViewModelBase, IRecipient<UpdateRealtim
             var dbNum = this.DbNumber;
             while (!token.IsCancellationRequested)
             {
-                if (dbNum == null) continue;
+                if (dbNum == null)
+                {
+                    continue;
+                }
+
                 ScanItems(token, dbService, dbNum.Value);
             }
         }, token);
@@ -269,10 +270,10 @@ public partial class S7DataValue : ViewModelBase
             case null:
                 return "null";
             case T val:
-            {
-                var to = val.ToString();
-                return to ?? "null";
-            }
+                {
+                    var to = val.ToString();
+                    return to ?? "null";
+                }
             default:
                 return ValueTypeError;
         }
