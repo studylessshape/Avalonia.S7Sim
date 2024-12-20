@@ -28,14 +28,12 @@ public partial class RealtimeViewModel : ViewModelBase, IRecipient<UpdateRealtim
     private bool CanDelete => SelectedItems?.Count > 0;
     private bool SelectOne => SelectedItems?.Count == 1;
 
-    private bool CanStopScan => scanTaskTokenSource?.IsCancellationRequested == false;
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(StopScanCommand))]
+    private bool _canStopScan;
 
     private Task? scanTask;
     private CancellationTokenSource? scanTaskTokenSource;
-
-    public RealtimeViewModel()
-    {
-    }
 
     public RealtimeViewModel(IS7DataBlockService dbService)
     {
@@ -46,6 +44,7 @@ public partial class RealtimeViewModel : ViewModelBase, IRecipient<UpdateRealtim
     public void AddDataItem()
     {
         S7DataItems.Add(new S7DataItem());
+        OnPropertyChanged(nameof(CanDelete));
     }
 
     [RelayCommand]
@@ -53,6 +52,7 @@ public partial class RealtimeViewModel : ViewModelBase, IRecipient<UpdateRealtim
     {
         S7DataItems.Insert(index, new S7DataItem());
         OnPropertyChanged(nameof(S7DataItems));
+        OnPropertyChanged(nameof(CanDelete));
     }
 
     [RelayCommand]
@@ -80,6 +80,7 @@ public partial class RealtimeViewModel : ViewModelBase, IRecipient<UpdateRealtim
 
         SelectedItems?.Clear();
         OnPropertyChanged(nameof(S7DataItems));
+        OnPropertyChanged(nameof(CanDelete));
     }
 
     [RelayCommand]
@@ -114,7 +115,7 @@ public partial class RealtimeViewModel : ViewModelBase, IRecipient<UpdateRealtim
                 ScanItems(token, dbService, dbNum.Value);
             }
         }, token);
-
+        CanStopScan = true;
         await scanTask;
     }
 
@@ -127,6 +128,7 @@ public partial class RealtimeViewModel : ViewModelBase, IRecipient<UpdateRealtim
             scanTaskTokenSource = null;
             scanTask = null;
         }
+        CanStopScan = false;
     }
 
     private void ScanItems(CancellationToken cancellationToken, IS7DataBlockService dbService, int dbNumber)
@@ -286,27 +288,27 @@ public partial class S7DataValue : ViewModelBase
             switch (DataType)
             {
                 case DataType.Bit:
-                    return ValueToType<bool>(_value);
+                    return ValueToType<bool>(Value);
                 case DataType.SInt:
-                    return ValueToType<byte>(_value);
+                    return ValueToType<byte>(Value);
                 case DataType.Int:
-                    return ValueToType<short>(_value);
+                    return ValueToType<short>(Value);
                 case DataType.DInt:
-                    return ValueToType<int>(_value);
+                    return ValueToType<int>(Value);
                 case DataType.LInt:
-                    return ValueToType<long>(_value);
+                    return ValueToType<long>(Value);
                 case DataType.UDInt:
-                    return ValueToType<uint>(_value);
+                    return ValueToType<uint>(Value);
                 case DataType.Byte:
-                    return ValueToType<byte>(_value);
+                    return ValueToType<byte>(Value);
                 // case DataType.Word:
-                //     return ValueToType<ushort>(_value);
+                //     return ValueToType<ushort>(Value);
                 // case DataType.DWord:
-                //     return ValueToType<uint>(_value);
+                //     return ValueToType<uint>(Value);
                 case DataType.Real:
-                    return ValueToType<float>(_value);
+                    return ValueToType<float>(Value);
                 case DataType.LReal:
-                    return ValueToType<double>(_value);
+                    return ValueToType<double>(Value);
                 default:
                     return ValueTypeUnsupported;
             }

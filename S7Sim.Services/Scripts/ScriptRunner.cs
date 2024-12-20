@@ -17,7 +17,7 @@ namespace S7Sim.Services.Scripts
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="newScope"></param>
-        public void RunFile(string filePath, bool newScope = false, CancellationToken token = default)
+        public virtual void RunFile(string filePath, bool newScope = false, CancellationToken token = default)
         {
             if (scope is null || newScope)
             {

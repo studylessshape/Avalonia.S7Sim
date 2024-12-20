@@ -13,12 +13,27 @@ namespace Avalonia.S7Sim
     {
 #pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑添加 "required" 修饰符或声明为可为 null。
         public IServiceProvider ServiceProvider { get; private set; }
-#pragma warning restore CS8618
+#pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑添加 "required" 修饰符或声明为可为 null。
 
         private IHost? s_host;
+
+        public static App? AppCurrent
+        {
+            get
+            {
+                if (Current == null)
+                {
+                    return null;
+                }
+
+                return (App)Current;
+            }
+        }
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
+            HostStartUp();
         }
 
         private void HostStartUp()
@@ -38,7 +53,6 @@ namespace Avalonia.S7Sim
                 // Line below is needed to remove Avalonia data validation.
                 // Without this line you will get duplicate validations from both Avalonia and CT
                 BindingPlugins.DataValidators.RemoveAt(0);
-                HostStartUp();
                 desktop.MainWindow = ServiceProvider.GetService<MainWindow>();
                 desktop.Exit += ExitHost;
             }
@@ -48,7 +62,7 @@ namespace Avalonia.S7Sim
 
         private void ExitHost(object? sender, ControlledApplicationLifetimeExitEventArgs e)
         {
-            using(s_host)
+            using (s_host)
             {
                 var lifetime = s_host?.Services.GetRequiredService<IHostApplicationLifetime>();
                 lifetime?.StopApplication();
