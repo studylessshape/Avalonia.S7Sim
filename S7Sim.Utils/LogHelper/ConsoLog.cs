@@ -9,7 +9,7 @@ namespace S7Sim.Utils.LogHelper
             var normalForegroundColor = Console.ForegroundColor;
             var normalBackgroundColor = Console.BackgroundColor;
 
-            Console.Write($"[{now ?? DateTime.Now:yyyy-MM-dd HH:mm:ss} ");
+            Console.Write($"[{now ?? DateTime.Now:yyyy-MM-dd HH:mm:ss}] ");
 
             switch (level)
             {
@@ -38,7 +38,7 @@ namespace S7Sim.Utils.LogHelper
                     break;
             }
 
-            Console.Write($"] {message}");
+            Console.Write($" {message}");
         }
 
         public static void LogInfo(string message, DateTime? now = null)

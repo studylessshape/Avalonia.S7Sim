@@ -5,6 +5,7 @@ using Avalonia.S7Sim.Views;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using S7Sim.Services;
 using System;
 using Ursa.Controls;
 

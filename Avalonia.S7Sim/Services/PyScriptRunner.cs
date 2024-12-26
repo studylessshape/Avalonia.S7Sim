@@ -1,10 +1,7 @@
-﻿using Avalonia.S7Sim.Services.Shell;
-using IronPython.Hosting;
+﻿using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
-using S7Sim.Services.DB;
-using S7Sim.Services.MB;
+using S7Sim.Services;
 using S7Sim.Services.Scripts;
-using S7Sim.Services.Server;
 
 namespace Avalonia.S7Sim.Services;
 
@@ -41,6 +38,4 @@ public class PyScriptRunner : ScriptRunner
 
         return scope;
     }
-
-
 }

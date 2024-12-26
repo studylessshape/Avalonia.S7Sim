@@ -1,4 +1,4 @@
-﻿namespace S7Sim.Services.DB
+﻿namespace S7Sim.Services
 {
     public interface IS7DataBlockService
     {

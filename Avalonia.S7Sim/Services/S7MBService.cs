@@ -1,10 +1,10 @@
 ﻿using FutureTech.Snap7;
+using S7Sim.Services;
 using S7Sim.Services.Exceptions;
 using S7Sim.Services.Models;
-using S7Sim.Services.Server;
 using System.Linq;
 
-namespace S7Sim.Services.MB
+namespace Avalonia.S7Sim.Services
 {
     public class S7MBService : IS7MBService
     {

@@ -2,7 +2,7 @@
 using Avalonia.S7Sim.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using S7Sim.Services.DB;
+using S7Sim.Services;
 using System;
 
 namespace Avalonia.S7Sim.ViewModels;

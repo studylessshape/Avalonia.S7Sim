@@ -3,10 +3,8 @@ using Avalonia.S7Sim.ViewModels;
 using Avalonia.S7Sim.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using S7Sim.Services.DB;
-using S7Sim.Services.MB;
+using S7Sim.Services;
 using S7Sim.Services.Scripts;
-using S7Sim.Services.Server;
 using System;
 
 namespace Avalonia.S7Sim.Services;
@@ -62,6 +60,10 @@ internal static class RegistServicesColleciton
 
         services.AddSingleton<IScriptRunner, PyScriptRunner>();
 
+        services.AddSingleton<PipeProfiles>();
+
         services.RegistViews();
+
+        services.AddHostedService<PipeHost>();
     }
 }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace S7Sim.Services.Server;
+namespace S7Sim.Services;
 
 public interface IS7ServerService
 {

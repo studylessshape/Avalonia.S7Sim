@@ -1,8 +1,8 @@
 ﻿using Avalonia.S7Sim.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using S7Sim.Services;
 using S7Sim.Services.Models;
-using S7Sim.Services.Server;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;

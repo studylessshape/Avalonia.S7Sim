@@ -1,6 +1,4 @@
-﻿using Avalonia.Controls.Notifications;
-
-namespace Avalonia.S7Sim.Services.Shell
+﻿namespace S7Sim.Services
 {
     public interface IShellCommand
     {
@@ -8,6 +6,6 @@ namespace Avalonia.S7Sim.Services.Shell
         int AcceptInputInt(string label);
         float AcceptInputFloat(string label);
         void ShowMessageBox(string message, int? icon = null);
-        void SendLogMessage(string log, NotificationType level = NotificationType.Information);
+        void SendLogMessage(string log, int level = 0);
     }
 }

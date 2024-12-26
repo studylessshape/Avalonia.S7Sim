@@ -11,5 +11,13 @@ namespace ArgsCommand.Attributes
         public string Command { get; set; }
 
         public string Description { get; set; }
+
+        /// <summary>
+        /// Remove option char
+        /// </summary>
+        public void Normalize()
+        {
+            Command = Command.TrimStart('-');
+        }
     }
 }
