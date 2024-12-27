@@ -1,10 +1,12 @@
 ﻿using Avalonia.Controls.Notifications;
 using Microsoft.Extensions.Hosting;
+using PipeProtocol;
 using S7Sim.Services;
 using System;
+using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,24 +17,28 @@ namespace Avalonia.S7Sim.Services
         private readonly PipeProfiles profiles;
         private readonly IShellCommand shell;
 
-        public PipeHost(PipeProfiles profiles, IShellCommand shell)
+        private Dictionary<string, object> commands = [];
+
+        public PipeHost(PipeProfiles profiles, IShellCommand shell, IS7DataBlockService dbService)
         {
             this.profiles = profiles;
             this.shell = shell;
+            RegistCommand("shell", shell);
+            RegistCommand("DB", dbService);
+        }
+
+        private void RegistCommand(string name, object module)
+        {
+            ArgumentNullException.ThrowIfNull(module);
+
+            if (!commands.TryAdd(name, module))
+            {
+                commands[name] = module;
+            }
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var methods = shell.GetType().GetMethods(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod);
-            if (methods != null)
-            {
-                var method = methods.Where(m => m.Name == "dsadsa").First();
-                var paras = method.GetParameters();
-                method.Invoke(shell, new object[]
-                {
-                });
-            }
-
             while (!stoppingToken.IsCancellationRequested)
             {
                 // 开启服务管道
@@ -42,29 +48,8 @@ namespace Avalonia.S7Sim.Services
                     await recevieStream.WaitForConnectionAsync(stoppingToken);
                     if (recevieStream.IsConnected)
                     {
-                        StringBuilder read = new();
-
-                        // 读取所有的内容
-                        while(recevieStream.CanRead)
-                        {
-                            var buffer = new byte[1024].AsMemory(0, 1024);
-                            // 读取管道流中的内容，注意不能使用 StreamReader，会读取到空内容
-                            var readLength = await recevieStream.ReadAsync(buffer, stoppingToken);
-                            if (readLength > 0)
-                            {
-                                // byte 设置的大小为 1024，空余的内容会在解码时自动补 \0，所以需要去除
-                                var content = Encoding.UTF8.GetString(buffer[..readLength].ToArray()).TrimEnd();
-                                if (content != null)
-                                {
-                                    read.Append(content);
-                                }
-                            }
-                        }
-
-                        //if (content == "Open")
-                        //{
-                        //    NotifyIconViewModel.ShowMainWindow();
-                        //}
+                        var command = await ProtocolTools.ReadCommandAsync(recevieStream, stoppingToken);
+                        await ProtocolTools.SendResponseAsync(recevieStream, RunCommand(command), stoppingToken);
                     }
                 }
                 catch (Exception e)
@@ -72,6 +57,95 @@ namespace Avalonia.S7Sim.Services
                     shell.SendLogMessage($"Occurs error on NamedPipe: {e}", (int)NotificationType.Error);
                 }
             }
+        }
+
+        private PipeResponse RunCommand(PipeCommand command)
+        {
+            if (!commands.TryGetValue(command.Module, out object? module))
+            {
+                return new PipeResponse()
+                {
+                    ErrCode = (int)ErrCodes.ModuleNotFound,
+                };
+            }
+
+            var method = module.GetType().GetMethod(command.Method);
+            if (method == null)
+            {
+                return new PipeResponse()
+                {
+                    ErrCode = (int)ErrCodes.MethodNotFound,
+                };
+            }
+
+            try
+            {
+                var methodParameters = method.GetParameters();
+
+                var normalParamCount = methodParameters.Where(p => !p.HasDefaultValue).Count();
+                var defaultParamCount = methodParameters.Where(p => p.HasDefaultValue).Count();
+                var commandParamCount = command.Parameters.Length;
+                if (commandParamCount > (normalParamCount + defaultParamCount))
+                {
+                    return new PipeResponse()
+                    {
+                        ErrCode = (int)ErrCodes.IncorrectParameterCount,
+                    };
+                }
+
+                object?[] parameters = new object[command.Parameters.Length];
+                foreach ((var para, var index) in methodParameters.Select((p, i) => (p, i)))
+                {
+                    if (index >= parameters.Length)
+                    {
+                        break;
+                    }
+
+                    var paraStr = command.Parameters[index];
+                    var paraType = para.ParameterType;
+
+                    if (paraStr.Trim().Equals("null", StringComparison.OrdinalIgnoreCase))
+                    {
+                        parameters[index] = null;
+                    }
+                    else if (paraType == typeof(string))
+                    {
+                        parameters[index] = paraStr[1..(paraStr.Length - 1)].Replace("\\\"", "\"");
+                    }
+                    else
+                    {
+                        parameters[index] = ParseParameter(paraType, paraStr);
+                    }
+                }
+
+                var returnObject = method.Invoke(module, parameters);
+
+                var response = new PipeResponse()
+                {
+                    ErrCode = 0,
+                };
+
+                if (method.ReturnType != typeof(void))
+                {
+                    response.Message = returnObject?.ToString();
+                }
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new PipeResponse()
+                {
+                    ErrCode = (int)ErrCodes.WhenBuildParameters,
+                    Message = e.Message
+                };
+            }
+        }
+
+        private object? ParseParameter(Type paraType, string paraStr)
+        {
+            var method = paraType.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, [typeof(string)]);
+            return method == null ? throw new Exception("Only support primary type") : method.Invoke(paraType, [paraStr]);
         }
     }
 }

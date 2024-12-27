@@ -38,7 +38,7 @@ namespace S7Sim.Utils.LogHelper
                     break;
             }
 
-            Console.Write($" {message}");
+            Console.Write($" {message}{Environment.NewLine}");
         }
 
         public static void LogInfo(string message, DateTime? now = null)

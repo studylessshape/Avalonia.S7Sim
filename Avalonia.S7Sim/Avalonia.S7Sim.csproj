@@ -37,6 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\PipeProtocol\PipeProtocol.csproj" />
     <ProjectReference Include="..\S7Sim.Services\S7Sim.Services.csproj" />
   </ItemGroup>
 

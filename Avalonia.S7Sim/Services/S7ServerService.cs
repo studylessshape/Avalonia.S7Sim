@@ -17,7 +17,7 @@ namespace Avalonia.S7Sim.Services
 
         protected virtual FutureTech.Snap7.S7Server? S7Server { get; set; }
 
-        public async Task<Result<ValueTuple, string>> StartServerAsync(IPAddress? address, IEnumerable<AreaConfig> areaConfigs)
+        public Task<Result<ValueTuple, string>> StartServerAsync(IPAddress? address, IEnumerable<AreaConfig> areaConfigs)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace Avalonia.S7Sim.Services
 
                 if (areaConfigs == null || areaConfigs.Count() == 0)
                 {
-                    return "当前 DBConfigs 为 NULL !";
+                    return Task.FromResult<Result<ValueTuple, string>>("当前 DBConfigs 为 NULL !");
                 }
 
                 _runningItems.Clear();
@@ -55,32 +55,32 @@ namespace Avalonia.S7Sim.Services
                 S7Server.StartTo(address?.ToString() ?? "127.0.0.1");
                 //MessageHelper.SendLogMessage(new LogMessage { Message = "[+]服务启动..." });
 
-                return ValueTuple.Create();
+                return Task.FromResult<Result<ValueTuple, string>>(ValueTuple.Create());
             }
             catch (Exception ex)
             {
                 var msg = $"启动服务器出错：{ex.Message}";
                 //_logger.LogError(msg);
                 //MessageHelper.ShowMessage(msg);
-                return msg;
+                return Task.FromResult<Result<ValueTuple, string>>(msg);
             }
         }
 
-        public async Task<Result<ValueTuple, string>> StopServerAsync()
+        public Task<Result<ValueTuple, string>> StopServerAsync()
         {
             try
             {
                 S7Server?.Stop();
                 S7Server = null;
                 //MessageHelper.SendLogMessage(new LogMessage() { Message = "[!]服务停止...", Level = Controls.Notifications.NotificationType.Warning });
-                return ValueTuple.Create();
+                return Task.FromResult<Result<ValueTuple, string>>(ValueTuple.Create());
             }
             catch (Exception ex)
             {
                 var msg = $"停止服务器出错：{ex.Message}";
                 //_logger.LogError(msg);
                 //MessageHelper.ShowMessage(msg);
-                return msg;
+                return Task.FromResult<Result<ValueTuple, string>>(msg);
             }
         }
 
