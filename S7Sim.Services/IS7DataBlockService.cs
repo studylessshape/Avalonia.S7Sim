@@ -24,12 +24,12 @@
         void WriteULong(int dbNumber, int pos, ulong value);
 
         float ReadReal(int dbNumber, int pos);
-        void WriteReal(int dbNumber, int pos, float real);
+        void WriteReal(int dbNumber, int pos, float value);
 
         double ReadDouble(int dbNumber, int pos);
-        void WriteDouble(int dbNumber, int pos, double real);
+        void WriteDouble(int dbNumber, int pos, double value);
 
         string ReadString(int dbNumber, int offset);
-        void WriteString(int dbNumber, int offset, int maxlen, string str);
+        void WriteString(int dbNumber, int offset, int maxlen, string value);
     }
 }

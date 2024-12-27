@@ -19,12 +19,13 @@ namespace Avalonia.S7Sim.Services
 
         private Dictionary<string, object> commands = [];
 
-        public PipeHost(PipeProfiles profiles, IShellCommand shell, IS7DataBlockService dbService)
+        public PipeHost(PipeProfiles profiles, IShellCommand shell, IS7DataBlockService dbService, IS7MBService mbService)
         {
             this.profiles = profiles;
             this.shell = shell;
             RegistCommand("shell", shell);
             RegistCommand("DB", dbService);
+            RegistCommand("MB", mbService);
         }
 
         private void RegistCommand(string name, object module)

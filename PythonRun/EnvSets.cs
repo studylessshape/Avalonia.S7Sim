@@ -4,7 +4,7 @@
     {
         public string FilePath { get; set; }
         public string[] EnvDirectories { get; set; }
-        public string? NamedPipe { get; set; }
+        public string NamedPipe { get; set; }
 
         public EnvSets(string[] args)
         {
@@ -36,16 +36,13 @@
             {
                 throw new ArgumentException("No target file to execute", "-f / --file");
             }
-            //if (namePipeOptionIndex + 1 >= args.Length || namePipeOptionIndex == -1)
-            //{
-            //    throw new ArgumentException("Need name of the name pipe", "-n / --name-pipe");
-            //}
+            if (namePipeOptionIndex + 1 >= args.Length || namePipeOptionIndex == -1)
+            {
+                throw new ArgumentException("Need name of the name pipe", "-n / --name-pipe");
+            }
 
             FilePath = args[filePathOptionIndex + 1];
-            if (namePipeOptionIndex + 1 < args.Length && namePipeOptionIndex != -1)
-            {
-                NamedPipe = args[namePipeOptionIndex + 1];
-            }
+            NamedPipe = args[namePipeOptionIndex + 1];
 
             List<string> list = [];
 

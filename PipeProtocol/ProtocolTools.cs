@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.IO.Pipes;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -10,6 +11,27 @@ namespace PipeProtocol
 {
     public static class ProtocolTools
     {
+        public static PipeResponse SendCommand(string pipeName, string module, string methodName, params string[] parameters)
+        {
+            using var clientStream = new NamedPipeClientStream(pipeName);
+            clientStream.Connect();
+
+            ProtocolTools.SendCommand(clientStream, new PipeCommand()
+            {
+                Module = module,
+                Method = methodName,
+                Parameters = parameters ?? [],
+            });
+
+            var response = ProtocolTools.ReadResponse(clientStream);
+            if (response.ErrCode != 0)
+            {
+                throw new Exception($"Execute command get code {response.ErrCode}, error message: {response.Message}");
+            }
+
+            return response;
+        }
+
         public static byte[] Read(Stream pipeStream, int count)
         {
             var buffer = new byte[count];
