@@ -2,7 +2,7 @@
 
 namespace S7Sim.Utils.LogHelper
 {
-    public static class ConsoLog
+    public static partial class ConsoLog
     {
         public static void Log(string message, LogLevel level = LogLevel.Info, DateTime? now = null)
         {

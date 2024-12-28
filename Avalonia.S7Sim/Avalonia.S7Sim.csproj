@@ -17,22 +17,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.2.2" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.2.2" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.2" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.2" />
+    <PackageReference Include="Avalonia" Version="11.2.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.2.3" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.3" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.3" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.2" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.3" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.2.0.1" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="FutureTech.Snap7" Version="0.6.4" />
-    <PackageReference Include="Irihi.Ursa" Version="1.6.0" />
-    <PackageReference Include="Irihi.Ursa.Themes.Semi" Version="1.6.0.2" />
-    <PackageReference Include="IronPython.StdLib" Version="3.4.1" />
+    <PackageReference Include="Irihi.Ursa" Version="1.6.2" />
+    <PackageReference Include="Irihi.Ursa.Themes.Semi" Version="1.6.2" />
+    <PackageReference Include="IronPython.StdLib" Version="3.4.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
-    <PackageReference Include="Semi.Avalonia" Version="11.2.1" />
-    <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.2.1" />
+    <PackageReference Include="Semi.Avalonia" Version="11.2.1.2" />
+    <PackageReference Include="Semi.Avalonia.DataGrid" Version="11.2.1.2" />
     <PackageReference Include="System.Text.Json" Version="9.0.0" />
   </ItemGroup>
 
@@ -42,6 +42,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\SubProcessIOWindow.axaml.cs">
+      <DependentUpon>SubProcessIOWindow.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\ScriptsView.axaml.cs">
       <DependentUpon>ScriptsView.axaml</DependentUpon>
     </Compile>

@@ -32,7 +32,9 @@ engine.SetSearchPaths(searchPaths);
 var scope = engine.CreateScope();
 
 scope.SetVariable("DB", dbService);
+scope.SetVariable("S7", dbService);
 scope.SetVariable("shell", shellCommand);
+scope.SetVariable("__PY_ENGINE__", engine);
 
 var source = engine.CreateScriptSourceFromFile(envSets.FilePath);
 var code = source.Compile();

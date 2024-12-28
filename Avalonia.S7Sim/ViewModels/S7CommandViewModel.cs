@@ -1,9 +1,14 @@
-﻿using Avalonia.Platform.Storage;
+﻿using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.S7Sim.Messages;
 using Avalonia.S7Sim.Services;
+using Avalonia.S7Sim.Views;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using S7Sim.Services.Scripts;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Ursa.Controls;
 
@@ -11,25 +16,28 @@ namespace Avalonia.S7Sim.ViewModels;
 
 public partial class S7CommandViewModel : ViewModelBase, IDisposable
 {
-#if DEBUG
-#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑添加 "required" 修饰符或声明为可为 null。
-    public S7CommandViewModel()
-#pragma warning restore CS8618
-    {
+    //#if DEBUG
+    //#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑添加 "required" 修饰符或声明为可为 null。
+    //    public S7CommandViewModel()
+    //#pragma warning restore CS8618
+    //    {
 
-    }
-#endif
+    //    }
+    //#endif
 
-    private readonly PyScriptRunner _scriptRunner;
+    private readonly IScriptRunner _scriptRunner;
     private readonly IServiceProvider serviceProvider;
+    private readonly PipeProfiles pipeProfiles;
     private bool disposedValue;
 
-    public S7CommandViewModel(ConfigS7ServerViewModel configModel, OperationsViewModel operationsModel, PyScriptRunner scriptRunner, IServiceProvider serviceProvider)
+    public S7CommandViewModel(ConfigS7ServerViewModel configModel, OperationsViewModel operationsModel,
+                              IScriptRunner scriptRunner, IServiceProvider serviceProvider, PipeProfiles pipeProfiles)
     {
         ConfigModel = configModel;
         OperationsViewModel = operationsModel;
         this._scriptRunner = scriptRunner;
         this.serviceProvider = serviceProvider;
+        this.pipeProfiles = pipeProfiles;
     }
 
     public ConfigS7ServerViewModel ConfigModel { get; }
@@ -57,7 +65,8 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
                 {
                     foreach (var file in files)
                     {
-                        _scriptRunner.RunFile(file.Path.AbsolutePath);
+                        //_scriptRunner.RunFile(file.Path.AbsolutePath);
+                        RunFile(file.Path.AbsolutePath);
                     }
                 });
                 MessageHelper.SendLogMessage(new LogMessage { Message = "脚本执行完毕！", Level = Controls.Notifications.NotificationType.Success });
@@ -68,6 +77,26 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
             MessageHelper.ShowMessage(new MessageContent { Message = $"执行脚本出错！\n{ex.Message}", Icon = MessageBoxIcon.Error });
             MessageHelper.SendLogMessage(new LogMessage { Message = $"执行脚本出错！\n{ex.Message}", Level = Controls.Notifications.NotificationType.Error });
         }
+    }
+
+    protected void RunFile(string path)
+    {
+        Process process = new Process();
+        process.StartInfo.FileName = "PythonRun.exe";
+
+        process.StartInfo.ArgumentList.Add("-f");
+        process.StartInfo.ArgumentList.Add(path);
+        process.StartInfo.ArgumentList.Add("-n");
+        process.StartInfo.ArgumentList.Add(pipeProfiles.PipeName);
+
+        Dispatcher.UIThread.Invoke(() =>
+        {
+            var window = new SubProcessIOWindow();
+            window.Title = path;
+            var viewModel = (SubProcessIOViewModel?)window.DataContext;
+            viewModel?.SetProcess(process);
+            window?.Show();
+        });
     }
 
     protected virtual void Dispose(bool disposing)

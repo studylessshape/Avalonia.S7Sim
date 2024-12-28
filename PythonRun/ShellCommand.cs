@@ -17,30 +17,30 @@ namespace PythonRun
 
         public float AcceptInputFloat(string label)
         {
-            var response = ProtocolTools.SendCommand(pipeName, Module, nameof(AcceptInputFloat), [$"\"{label}\""]);
+            var response = ProtocolExtra.SendCommand(pipeName, Module, nameof(AcceptInputFloat), [$"\"{label}\""]);
             return float.Parse(response.Message);
         }
 
         public int AcceptInputInt(string label)
         {
-            var response = ProtocolTools.SendCommand(pipeName, Module, nameof(AcceptInputInt), [$"\"{label}\""]);
+            var response = ProtocolExtra.SendCommand(pipeName, Module, nameof(AcceptInputInt), [$"\"{label}\""]);
             return int.Parse(response.Message);
         }
 
         public string AcceptInputString(string label)
         {
-            var response = ProtocolTools.SendCommand(pipeName, Module, nameof(AcceptInputInt), [$"\"{label}\""]);
+            var response = ProtocolExtra.SendCommand(pipeName, Module, nameof(AcceptInputString), [$"\"{label}\""]);
             return response.Message;
         }
 
         public void SendLogMessage(string log, int level = 0)
         {
-            ProtocolTools.SendCommand(pipeName, Module, nameof(AcceptInputInt), [$"\"{log}\"", level.ToString()]);
+            ProtocolExtra.SendCommand(pipeName, Module, nameof(SendLogMessage), [$"\"{log}\"", level.ToString()]);
         }
 
         public void ShowMessageBox(string message, int? icon = null)
         {
-            ProtocolTools.SendCommand(pipeName, Module, nameof(AcceptInputInt), [$"\"{message}\"", icon?.ToString() ?? "null"]);
+            ProtocolExtra.SendCommand(pipeName, Module, nameof(ShowMessageBox), [$"\"{message}\"", icon?.ToString() ?? "null"]);
         }
     }
 }

@@ -55,7 +55,7 @@ namespace Avalonia.S7Sim.Services
                 }
                 catch (Exception e)
                 {
-                    shell.SendLogMessage($"Occurs error on NamedPipe: {e}", (int)NotificationType.Error);
+                    shell.SendLogMessage($"Occurs error on NamedPipe:\n{e.Message}", (int)NotificationType.Error);
                 }
             }
         }

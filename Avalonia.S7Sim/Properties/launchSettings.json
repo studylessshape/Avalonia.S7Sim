@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Avalonia.S7Sim": {
+      "commandName": "Project",
+      "workingDirectory": "..\\PythonRun\\bin\\Debug\\net8.0"
+    }
+  }
+}

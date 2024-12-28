@@ -1,10 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Markup.Xaml;
-using Avalonia.Rendering;
 using Avalonia.S7Sim.ViewModels;
-using System;
 
 namespace Avalonia.S7Sim.Views;
 

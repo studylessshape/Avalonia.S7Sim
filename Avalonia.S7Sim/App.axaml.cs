@@ -6,6 +6,8 @@ using Avalonia.S7Sim.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Avalonia.S7Sim
 {
@@ -16,6 +18,8 @@ namespace Avalonia.S7Sim
 #pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑添加 "required" 修饰符或声明为可为 null。
 
         private IHost? s_host;
+        private CancellationTokenSource stopTokenSource = new();
+        private Task? _HostTask;
 
         public static App? AppCurrent
         {
@@ -43,6 +47,11 @@ namespace Avalonia.S7Sim
                 .Build();
             ServiceProvider = s_host.Services;
             ServiceProvider.WeakupService();
+            //ServiceProvider.RunHostService(stopTokenSource.Token);
+            _HostTask = Task.Run(async () =>
+            {
+                await s_host.RunAsync(stopTokenSource.Token);
+            }, stopTokenSource.Token);
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -64,8 +73,16 @@ namespace Avalonia.S7Sim
         {
             using (s_host)
             {
-                var lifetime = s_host?.Services.GetRequiredService<IHostApplicationLifetime>();
-                lifetime?.StopApplication();
+                try
+                {
+                    var lifetime = s_host?.Services.GetRequiredService<IHostApplicationLifetime>();
+                    lifetime?.StopApplication();
+                    stopTokenSource.Cancel();
+                }
+                catch (Exception)
+                {
+
+                }
             }
         }
     }

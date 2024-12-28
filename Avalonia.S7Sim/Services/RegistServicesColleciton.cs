@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using S7Sim.Services;
 using S7Sim.Services.Scripts;
 using System;
+using System.Threading;
 
 namespace Avalonia.S7Sim.Services;
 
@@ -50,6 +51,12 @@ internal static class RegistServicesColleciton
     internal static void WeakupService(this IServiceProvider serviceProvider)
     {
         serviceProvider.GetService<MessageBoxViewModel>();
+    }
+
+    internal static void RunHostService(this IServiceProvider serviceProvider, CancellationToken stopToken)
+    {
+        var host = serviceProvider.GetService<PipeHost>();
+        host?.StartAsync(stopToken);
     }
 
     internal static void Regist(HostBuilderContext context, IServiceCollection services)

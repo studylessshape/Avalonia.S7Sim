@@ -14,13 +14,13 @@ namespace PipeProtocol
         public static PipeResponse SendCommand(string pipeName, string module, string methodName, params string[] parameters)
         {
             using var clientStream = new NamedPipeClientStream(pipeName);
-            clientStream.Connect();
+            clientStream.Connect(10);
 
             ProtocolTools.SendCommand(clientStream, new PipeCommand()
             {
                 Module = module,
                 Method = methodName,
-                Parameters = parameters ?? [],
+                Parameters = parameters ?? Array.Empty<string>(),
             });
 
             var response = ProtocolTools.ReadResponse(clientStream);
@@ -62,7 +62,7 @@ namespace PipeProtocol
 
         public static void Send(Stream pipeStream, string message)
         {
-            var messageBytes = Encoding.UTF8.GetBytes(message);
+            var messageBytes = Encoding.UTF8.GetBytes(message ?? "");
             var head = new Head() { TotalIndex = 1, CurrentIndex = 1, ContentLength = messageBytes.Length };
 
             var sendBytes = head.GetBytes().Concat(messageBytes).ToArray();
@@ -71,7 +71,7 @@ namespace PipeProtocol
 
         public static async Task SendAsync(Stream pipeStream, string message, CancellationToken? stopToken = null)
         {
-            var messageBytes = Encoding.UTF8.GetBytes(message);
+            var messageBytes = Encoding.UTF8.GetBytes(message ?? "");
             var head = new Head() { TotalIndex = 1, CurrentIndex = 1, ContentLength = messageBytes.Length };
 
             var sendBytes = head.GetBytes().Concat(messageBytes).ToArray();
@@ -186,12 +186,12 @@ namespace PipeProtocol
             {
                 TotalIndex = 1,
                 CurrentIndex = 1,
-                ContentLength = msg.Length
+                ContentLength = msg == null ? 0 : msg.Length
             };
 
             var errCodeBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(errCode));
 
-            var sendBytes = head.GetBytes().Concat(errCodeBytes).Concat(Encoding.UTF8.GetBytes(msg)).ToArray();
+            var sendBytes = head.GetBytes().Concat(errCodeBytes).Concat(Encoding.UTF8.GetBytes(msg ?? "")).ToArray();
             pipeStream.Write(sendBytes, 0, sendBytes.Length);
         }
 
@@ -201,12 +201,12 @@ namespace PipeProtocol
             {
                 TotalIndex = 1,
                 CurrentIndex = 1,
-                ContentLength = response.Message.Length
+                ContentLength = response.Message == null ? 0 : response.Message.Length
             };
 
             var errCodeBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(response.ErrCode));
 
-            var sendBytes = head.GetBytes().Concat(errCodeBytes).Concat(Encoding.UTF8.GetBytes(response.Message)).ToArray();
+            var sendBytes = head.GetBytes().Concat(errCodeBytes).Concat(Encoding.UTF8.GetBytes(response.Message ?? "")).ToArray();
             await pipeStream.WriteAsync(sendBytes, 0, sendBytes.Length, stopToken);
         }
 

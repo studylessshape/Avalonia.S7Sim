@@ -69,7 +69,7 @@ public partial class ConfigS7ServerViewModel : ViewModelBase
     private async Task StopServer()
     {
         var stopRes = await _serverService.StopServerAsync();
-        if (stopRes.IsOk)
+        if (stopRes.IsError)
         {
             MessageHelper.ShowMessage(new MessageContent { Message = stopRes.ErrorValue, Icon = Ursa.Controls.MessageBoxIcon.Error });
         }
