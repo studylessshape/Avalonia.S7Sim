@@ -30,18 +30,29 @@
                                    FontSize="16"
                                    />
                     </u:FormItem>
-                    <u:FormItem Label="批量执行">
-                        <Button Theme="{DynamicResource SolidButton}"
-                                Command="{Binding RunPyScriptCommand}"
-                                >
-                            导入 Python 脚本
-                        </Button>
-                    </u:FormItem>
+
                     <u:FormItem Label="DB Number">
                         <u:NumericIntUpDown Value="{Binding OperationsViewModel.TargetDB}" />
                     </u:FormItem>
                     <u:FormItem Label="DB Position">
                         <u:NumericIntUpDown Value="{Binding OperationsViewModel.TargetPos}" />
+                    </u:FormItem>
+                    <u:FormItem Label="执行脚本">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    VerticalAlignment="Center"
+                                    >
+                            <Button Theme="{DynamicResource SolidButton}"
+                                    Command="{Binding RunPyScriptCommand}"
+                                    >
+                                导入 Python 脚本
+                            </Button>
+                            <CheckBox IsChecked="{Binding AutoShowWindowWhenRunScript}"
+                                      VerticalAlignment="Center"
+                                      >
+                                显示脚本窗口
+                            </CheckBox>
+                        </StackPanel>
                     </u:FormItem>
                 </u:FormGroup>
             </u:Form>

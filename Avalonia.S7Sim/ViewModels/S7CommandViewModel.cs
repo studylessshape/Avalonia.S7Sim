@@ -4,10 +4,12 @@ using Avalonia.S7Sim.Messages;
 using Avalonia.S7Sim.Services;
 using Avalonia.S7Sim.Views;
 using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using S7Sim.Services.Scripts;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Ursa.Controls;
@@ -16,19 +18,23 @@ namespace Avalonia.S7Sim.ViewModels;
 
 public partial class S7CommandViewModel : ViewModelBase, IDisposable
 {
-    //#if DEBUG
-    //#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑添加 "required" 修饰符或声明为可为 null。
-    //    public S7CommandViewModel()
-    //#pragma warning restore CS8618
-    //    {
+#if DEBUG
+#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑添加 "required" 修饰符或声明为可为 null。
+    public S7CommandViewModel()
+#pragma warning restore CS8618
+    {
 
-    //    }
-    //#endif
+    }
+#endif
 
     private readonly IScriptRunner _scriptRunner;
     private readonly IServiceProvider serviceProvider;
     private readonly PipeProfiles pipeProfiles;
     private bool disposedValue;
+    private List<Window> scriptWindow = [];
+
+    [ObservableProperty]
+    private bool autoShowWindowWhenRunScript;
 
     public S7CommandViewModel(ConfigS7ServerViewModel configModel, OperationsViewModel operationsModel,
                               IScriptRunner scriptRunner, IServiceProvider serviceProvider, PipeProfiles pipeProfiles)
@@ -69,7 +75,7 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
                         RunFile(file.Path.AbsolutePath);
                     }
                 });
-                MessageHelper.SendLogMessage(new LogMessage { Message = "脚本执行完毕！", Level = Controls.Notifications.NotificationType.Success });
+                MessageHelper.SendLogMessage(new LogMessage { Message = "脚本全部开始执行！", Level = Controls.Notifications.NotificationType.Success });
             }
         }
         catch (Exception ex)
@@ -89,14 +95,56 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
         process.StartInfo.ArgumentList.Add("-n");
         process.StartInfo.ArgumentList.Add(pipeProfiles.PipeName);
 
+
         Dispatcher.UIThread.Invoke(() =>
         {
-            var window = new SubProcessIOWindow();
-            window.Title = path;
+            var window = new SubProcessIOWindow
+            {
+                Title = path
+            };
+
+            scriptWindow.Add(window);
+            window.Closed += (_, _) =>
+            {
+                scriptWindow.Remove(window);
+            };
+
             var viewModel = (SubProcessIOViewModel?)window.DataContext;
             viewModel?.SetProcess(process);
-            window?.Show();
+            if (AutoShowWindowWhenRunScript)
+            {
+                var mainWindow = serviceProvider.GetRequiredService<MainWindow>();
+                window.Show(mainWindow);
+            }
+            else
+            {
+                window.Hide();
+            }
         });
+    }
+
+    partial void OnAutoShowWindowWhenRunScriptChanged(bool value)
+    {
+        ShowScriptWindow(value);
+    }
+
+    private void ShowScriptWindow(bool show)
+    {
+        if (show)
+        {
+            var mainWindow = serviceProvider.GetRequiredService<MainWindow>();
+            foreach (var window in scriptWindow)
+            {
+                window.Show(mainWindow);
+            }
+        }
+        else
+        {
+            foreach (var window in scriptWindow)
+            {
+                window.Hide();
+            }
+        }
     }
 
     protected virtual void Dispose(bool disposing)

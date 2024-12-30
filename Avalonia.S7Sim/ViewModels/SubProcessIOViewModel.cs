@@ -8,7 +8,7 @@ namespace Avalonia.S7Sim.ViewModels
 {
     public partial class SubProcessIOViewModel : ViewModelBase
     {
-        private Process? SubProcess;
+        public Process? SubProcess { get; private set; }
         private readonly CancellationTokenSource tokenSource = new();
 
         public event Action? CloseWindow;
@@ -91,6 +91,7 @@ namespace Avalonia.S7Sim.ViewModels
             try
             {
                 tokenSource.Cancel();
+                tokenSource.Dispose();
                 if (force)
                 {
                     SubProcess?.Kill();

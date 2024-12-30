@@ -36,8 +36,8 @@ internal static class RegistServicesColleciton
         services.AddSingleton<ScriptsView>();
         services.AddSingleton<ScriptsViewModel>();
 
-        services.AddSingleton<RealtimeView>();
-        services.AddSingleton<RealtimeViewModel>();
+        //services.AddSingleton<RealtimeView>();
+        //services.AddSingleton<RealtimeViewModel>();
 
         services.AddScoped<IShellCommand, ShellCommand>();
 

@@ -49,9 +49,9 @@
                 <TabItem Header="DB 命令"
                          x:Name="PART_DBCommand"
                          />
-                <TabItem Header="DB 表"
+                <!--<TabItem Header="DB 表"
                          x:Name="PART_DBTable"
-                         />
+                         />-->
                 <TabItem Header="Py 引擎"
                          x:Name="PART_PyEngine"
                          />
