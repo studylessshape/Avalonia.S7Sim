@@ -9,7 +9,10 @@ namespace PythonRun
         {
             ConsoLog.LogInfo($"Send command: {module}.{methodName} {parameters?.AsString(",")}");
             var response = ProtocolTools.SendCommand(pipeName, module, methodName, parameters);
-            LogExtra.LogResponse(response);
+            if (!(response.ErrCode == (int)ErrCodes.None && response.Message.Length == 0))
+            {
+                LogExtra.LogResponse(response);
+            }
 
             return response;
         }

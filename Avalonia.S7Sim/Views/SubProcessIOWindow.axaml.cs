@@ -27,7 +27,6 @@ public partial class SubProcessIOWindow : UrsaWindow
         {
             try
             {
-                Dispatcher.UIThread.VerifyAccess();
                 Dispatcher.UIThread.Invoke(() =>
                 {
                     Close();
