@@ -34,7 +34,7 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
     private List<Window> scriptWindow = [];
 
     [ObservableProperty]
-    private bool autoShowWindowWhenRunScript;
+    private bool autoShowWindowWhenRunScript = true;
 
     public S7CommandViewModel(ConfigS7ServerViewModel configModel, OperationsViewModel operationsModel,
                               IScriptRunner scriptRunner, IServiceProvider serviceProvider, PipeProfiles pipeProfiles)
@@ -153,7 +153,10 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
         {
             if (disposing)
             {
-
+                foreach (var window in scriptWindow)
+                {
+                    window.Close();
+                }
             }
 
             // TODO: 释放未托管的资源(未托管的对象)并重写终结器

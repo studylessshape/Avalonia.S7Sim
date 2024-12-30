@@ -16,7 +16,16 @@ namespace Avalonia.S7Sim.ViewModels
         [ObservableProperty]
         private string stdOut = "";
 
+        public delegate void OnStringValueChangedDelegate(string? oldValue, string newValue);
+        public event OnStringValueChangedDelegate? OnStdOutChangedEvent;
+
         private readonly object stdOutLock = new();
+        private bool forceExit = false;
+
+        partial void OnStdOutChanged(string? oldValue, string newValue)
+        {
+            OnStdOutChangedEvent?.Invoke(oldValue, newValue);
+        }
 
         public void SetProcess(Process process)
         {
@@ -37,12 +46,15 @@ namespace Avalonia.S7Sim.ViewModels
                 _ = UpdateStandardOut(tokenSource.Token);
                 _ = UpdateStandardError(tokenSource.Token);
                 SubProcess?.WaitForExit();
-                Stop();
-                lock (stdOutLock)
+                if (!forceExit)
                 {
-                    StdOut += "\nThis window will be closed in 5 Seconds...";
+                    Stop();
+                    lock (stdOutLock)
+                    {
+                        StdOut += "\nThis window will be closed in 5 Seconds...";
+                    }
+                    Task.Delay(TimeSpan.FromSeconds(5)).Wait();
                 }
-                Task.Delay(TimeSpan.FromSeconds(5)).Wait();
                 CloseWindow?.Invoke();
             });
             thread.Start();
@@ -90,6 +102,7 @@ namespace Avalonia.S7Sim.ViewModels
         {
             try
             {
+                forceExit = force;
                 tokenSource.Cancel();
                 tokenSource.Dispose();
                 if (force)

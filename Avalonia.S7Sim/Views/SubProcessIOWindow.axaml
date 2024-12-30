@@ -16,12 +16,6 @@
     <Design.DataContext>
         <vm:SubProcessIOViewModel />
     </Design.DataContext>
-    <u:UrsaWindow.Styles>
-        <Style Selector="u|UrsaWindow">
-            <Setter Property="BorderThickness" Value="3" />
-            <Setter Property="BorderBrush" Value="{DynamicResource BorderCardBorderBrush}" />
-        </Style>
-    </u:UrsaWindow.Styles>
     <u:UrsaWindow.TitleBarContent>
         <TextBlock Margin="10 0"
                    Text="{Binding #Root_Window.Title}"
@@ -30,18 +24,24 @@
                    />
     </u:UrsaWindow.TitleBarContent>
     <Border BorderThickness="0 2 0 0"
-            Margin="0 40 0 0"
+            Margin="0 30 0 0"
             Padding="10"
             BorderBrush="{DynamicResource BorderCardBorderBrush}"
             >
-        <Panel>
-            <SelectableTextBlock Text="{Binding StdOut}">
+        <ScrollViewer x:Name="LOG_ScrollViewer"
+                      u:ScrollTo.Direction="Bottom"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto"
+                      >
+            <SelectableTextBlock Text="{Binding StdOut}"
+                                 x:Name="LOG_LogContent"
+                                 >
                 <SelectableTextBlock.Styles>
                     <Style Selector="SelectableTextBlock">
                         <Setter Property="TextWrapping" Value="WrapWithOverflow" />
                     </Style>
                 </SelectableTextBlock.Styles>
             </SelectableTextBlock>
-        </Panel>
+        </ScrollViewer>
     </Border>
 </u:UrsaWindow>

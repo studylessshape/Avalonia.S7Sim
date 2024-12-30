@@ -1,6 +1,7 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:u="using:Ursa.Controls"
+        xmlns:s7="using:Avalonia.S7Sim.UserControls"
         >
     <Design.PreviewWith>
         <Border Padding="20">
@@ -13,14 +14,8 @@
         <!--  Copy and modify from https://github.com/irihitech/Semi.Avalonia/blob/7a07c285d0d0e059d875b2d897ce8c726af653fb/src/Semi.Avalonia/Controls/HeaderedContentControl.axaml#L46  -->
         <ControlTheme TargetType="HeaderedContentControl"
                       x:Key="GroupBox"
+                      BasedOn="{StaticResource ResourceKey=GroupBox}"
                       >
-            <Setter Property="Background" Value="{DynamicResource HeaderedContentControlDefaultBackground}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="BorderBrush" Value="{DynamicResource HeaderedContentControlDefaultBorderBrush}" />
-            <Setter Property="CornerRadius" Value="{DynamicResource HeaderedContentControlCornerRadius}" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="HorizontalContentAlignment" Value="Left" />
-            <Setter Property="VerticalContentAlignment" Value="Stretch" />
             <Setter Property="Template">
                 <ControlTemplate TargetType="HeaderedContentControl">
                     <Border HorizontalAlignment="Stretch"
@@ -55,6 +50,59 @@
                     </Border>
                 </ControlTemplate>
             </Setter>
+        </ControlTheme>
+        <ControlTheme x:Key="{x:Type u:TitleBar}"
+                      TargetType="u:TitleBar"
+                      BasedOn="{StaticResource ResourceKey={x:Type u:TitleBar}}"
+                      >
+            <Setter Property="Template">
+                <ControlTemplate TargetType="u:TitleBar">
+                    <Panel Background="Transparent">
+                        <Panel>
+                            <Border Name="PART_Background"
+                                    Background="{TemplateBinding Background}"
+                                    IsHitTestVisible="True"
+                                    />
+                            <Grid HorizontalAlignment="Stretch"
+                                  ColumnDefinitions="Auto, *, Auto, Auto"
+                                  >
+                                <ContentPresenter Grid.Column="0"
+                                                  Content="{TemplateBinding LeftContent}"
+                                                  IsVisible="{TemplateBinding IsTitleVisible}"
+                                                  />
+                                <ContentPresenter Grid.Column="1"
+                                                  Content="{TemplateBinding Content}"
+                                                  IsVisible="{TemplateBinding IsTitleVisible}"
+                                                  />
+                                <ContentPresenter Grid.Column="2"
+                                                  Content="{TemplateBinding RightContent}"
+                                                  IsVisible="{TemplateBinding IsTitleVisible}"
+                                                  />
+                                <s7:OverrideCaptionButtons x:Name="PART_CaptionButtons"
+                                                           Grid.Column="3"
+                                                           Margin="8 0"
+                                                           HorizontalAlignment="Right"
+                                                           VerticalAlignment="Top"
+                                                           DockPanel.Dock="Right"
+                                                           Foreground="{TemplateBinding Foreground}"
+                                                           />
+                            </Grid>
+                        </Panel>
+                    </Panel>
+                </ControlTemplate>
+            </Setter>
+        </ControlTheme>
+        <ControlTheme x:Key="{x:Type s7:OverrideCaptionButtons}"
+                      TargetType="s7:OverrideCaptionButtons"
+                      BasedOn="{StaticResource ResourceKey={x:Type u:CaptionButtons}}"
+                      />
+        <ControlTheme x:Key="{x:Type u:UrsaWindow}"
+                      TargetType="u:UrsaWindow"
+                      BasedOn="{StaticResource ResourceKey={x:Type u:UrsaWindow}}"
+                      >
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderCardBorderBrush}" />
+            <Setter Property="BorderThickness" Value="3" />
+            <Setter Property="Padding" Value="3" />
         </ControlTheme>
     </Styles.Resources>
 </Styles>
