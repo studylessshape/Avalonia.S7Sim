@@ -7,10 +7,12 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Scripting.Utils;
 using S7Sim.Services.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Ursa.Controls;
 
@@ -25,6 +27,7 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
     {
 
     }
+
 #endif
 
     private readonly IScriptRunner _scriptRunner;
@@ -32,15 +35,17 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
     private readonly PipeProfiles pipeProfiles;
     private bool disposedValue;
     private List<Window> scriptWindow = [];
+    private readonly ScriptsViewModel scriptsViewModel;
 
     [ObservableProperty]
     private bool autoShowWindowWhenRunScript = true;
 
-    public S7CommandViewModel(ConfigS7ServerViewModel configModel, OperationsViewModel operationsModel,
+    public S7CommandViewModel(ConfigS7ServerViewModel configModel, OperationsViewModel operationsModel, ScriptsViewModel scriptsViewModel,
                               IScriptRunner scriptRunner, IServiceProvider serviceProvider, PipeProfiles pipeProfiles)
     {
         ConfigModel = configModel;
         OperationsViewModel = operationsModel;
+        this.scriptsViewModel = scriptsViewModel;
         this._scriptRunner = scriptRunner;
         this.serviceProvider = serviceProvider;
         this.pipeProfiles = pipeProfiles;
@@ -94,7 +99,8 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
         process.StartInfo.ArgumentList.Add(path);
         process.StartInfo.ArgumentList.Add("-n");
         process.StartInfo.ArgumentList.Add(pipeProfiles.PipeName);
-
+        process.StartInfo.ArgumentList.Add("-s");
+        process.StartInfo.ArgumentList.AddRange(scriptsViewModel.EngineSearchPaths.Select(path => path.Path));
 
         Dispatcher.UIThread.Invoke(() =>
         {
