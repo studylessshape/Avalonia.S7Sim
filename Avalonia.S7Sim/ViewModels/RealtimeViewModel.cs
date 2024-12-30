@@ -1,10 +1,10 @@
-﻿using Avalonia.S7Sim.Exceptions;
-using Avalonia.S7Sim.Messages;
+﻿using Avalonia.S7Sim.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Scripting.Utils;
 using S7Sim.Services;
+using S7Sim.Services.Exceptions;
 using S7Sim.Services.Models;
 using S7Sim.Services.Models.Events;
 using System;

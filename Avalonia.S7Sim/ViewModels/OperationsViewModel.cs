@@ -1,8 +1,8 @@
-﻿using Avalonia.S7Sim.Exceptions;
-using Avalonia.S7Sim.Messages;
+﻿using Avalonia.S7Sim.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using S7Sim.Services;
+using S7Sim.Services.Exceptions;
 using System;
 
 namespace Avalonia.S7Sim.ViewModels;

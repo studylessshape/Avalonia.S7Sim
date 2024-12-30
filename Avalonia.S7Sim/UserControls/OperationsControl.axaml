@@ -151,6 +151,40 @@
                 </u:FormGroup>
             </u:Form>
         </TabItem>
+        <TabItem Header="Real 操作">
+            <u:Form LabelPosition="Left"
+                    LabelWidth="*"
+                    LabelAlignment="Left"
+                    >
+                <u:FormGroup>
+                    <u:FormItem Label="读操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="读取"
+                                    Command="{Binding ReadRealCommand}"
+                                    />
+                            <TextBlock Text="{Binding RealRead}"
+                                       VerticalAlignment="Center"
+                                       MinWidth="80"
+                                       />
+                        </StackPanel>
+                    </u:FormItem>
+                    <u:FormItem Label="写操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="写入"
+                                    Command="{Binding WriteRealCommand}"
+                                    />
+                            <u:NumericUIntUpDown Value="{Binding RealToWrite}"
+                                                 MinWidth="120"
+                                                 />
+                        </StackPanel>
+                    </u:FormItem>
+                </u:FormGroup>
+            </u:Form>
+        </TabItem>
         <TabItem Header="String 操作">
             <u:Form LabelPosition="Left"
                     LabelWidth="*"
