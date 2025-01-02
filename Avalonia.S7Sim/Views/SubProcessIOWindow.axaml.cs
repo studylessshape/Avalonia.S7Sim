@@ -37,6 +37,7 @@ public partial class SubProcessIOWindow : UrsaWindow
             }
         };
         viewModel.OnStdOutChangedEvent += ViewModel_OnStdOutChangedEvent;
+        viewModel.SetOwnerWindow(this);
         this.DataContext = viewModel;
     }
 

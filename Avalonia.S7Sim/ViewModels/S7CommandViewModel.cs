@@ -92,16 +92,6 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
 
     protected void RunFile(string path)
     {
-        Process process = new Process();
-        process.StartInfo.FileName = "PythonRun.exe";
-
-        process.StartInfo.ArgumentList.Add("-f");
-        process.StartInfo.ArgumentList.Add(path);
-        process.StartInfo.ArgumentList.Add("-n");
-        process.StartInfo.ArgumentList.Add(pipeProfiles.PipeName);
-        process.StartInfo.ArgumentList.Add("-s");
-        process.StartInfo.ArgumentList.AddRange(scriptsViewModel.EngineSearchPaths.Select(path => path.Path));
-
         Dispatcher.UIThread.Invoke(() =>
         {
             var window = new SubProcessIOWindow
@@ -116,11 +106,10 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
             };
 
             var viewModel = (SubProcessIOViewModel?)window.DataContext;
-            viewModel?.SetProcess(process);
+            viewModel?.StartScript(path);
             if (AutoShowWindowWhenRunScript)
             {
-                var mainWindow = serviceProvider.GetRequiredService<MainWindow>();
-                window.Show(mainWindow);
+                window.Show();
             }
             else
             {
@@ -138,10 +127,9 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
     {
         if (show)
         {
-            var mainWindow = serviceProvider.GetRequiredService<MainWindow>();
             foreach (var window in scriptWindow)
             {
-                window.Show(mainWindow);
+                window.Show();
             }
         }
         else

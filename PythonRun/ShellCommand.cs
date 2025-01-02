@@ -1,5 +1,4 @@
-﻿using PipeProtocol;
-using S7Sim.Services;
+﻿using S7Sim.Services;
 
 namespace PythonRun
 {

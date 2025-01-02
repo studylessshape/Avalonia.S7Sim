@@ -39,7 +39,7 @@ internal static class RegistServicesColleciton
         //services.AddSingleton<RealtimeView>();
         //services.AddSingleton<RealtimeViewModel>();
 
-        services.AddScoped<IShellCommand, ShellCommand>();
+        services.AddTransient<IShellCommand, ShellCommand>();
 
         return services;
     }
@@ -55,8 +55,6 @@ internal static class RegistServicesColleciton
 
     internal static void RunHostService(this IServiceProvider serviceProvider, CancellationToken stopToken)
     {
-        var host = serviceProvider.GetService<PipeHost>();
-        host?.StartAsync(stopToken);
     }
 
     internal static void Regist(HostBuilderContext context, IServiceCollection services)
@@ -71,6 +69,6 @@ internal static class RegistServicesColleciton
 
         services.RegistViews();
 
-        services.AddHostedService<PipeHost>();
+        services.AddTransient<PipeHost>();
     }
 }

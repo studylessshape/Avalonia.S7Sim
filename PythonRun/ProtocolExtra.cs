@@ -14,6 +14,11 @@ namespace PythonRun
                 LogExtra.LogResponse(response);
             }
 
+            if (response.ErrCode != (int)ErrCodes.None)
+            {
+                throw new Exception(response.Message);
+            }
+
             return response;
         }
     }

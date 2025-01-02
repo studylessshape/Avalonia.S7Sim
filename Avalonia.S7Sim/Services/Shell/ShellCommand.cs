@@ -14,10 +14,18 @@ namespace Avalonia.S7Sim.Services.Shell;
 public class ShellCommand : IShellCommand
 {
     private readonly IServiceProvider service;
+    private Window? ownerWindow;
+
+    private Window dialogOwnerWindow => ownerWindow ?? service.GetRequiredService<MainWindow>();
 
     public ShellCommand(IServiceProvider service)
     {
         this.service = service;
+    }
+
+    public void SetOwner(Window? window)
+    {
+        ownerWindow = window;
     }
 
     protected virtual Window CreateDialogWindow(string label)
@@ -51,9 +59,9 @@ public class ShellCommand : IShellCommand
         {
             var dialog = CreateDialogWindow(label);
 
-            var numberInput = new Avalonia.Controls.NumericUpDown();
-            numberInput.SetValue(Avalonia.Controls.NumericUpDown.MinWidthProperty, 200);
-            numberInput.SetValue(Avalonia.Controls.NumericUpDown.IncrementProperty, 1);
+            var numberInput = new Controls.NumericUpDown();
+            numberInput.SetValue(Controls.NumericUpDown.MinWidthProperty, 200);
+            numberInput.SetValue(Controls.NumericUpDown.IncrementProperty, 1);
 
             dialog.Content = numberInput;
             numberInput.KeyBindings.Add(new Input.KeyBinding()
@@ -65,7 +73,7 @@ public class ShellCommand : IShellCommand
                 Gesture = new Input.KeyGesture(Input.Key.Enter)
             });
 
-            var dialogTask = dialog.ShowDialog<DialogResult?>(service.GetRequiredService<MainWindow>());
+            var dialogTask = dialog.ShowDialog<DialogResult?>(dialogOwnerWindow);
             numberInput.Focus();
 
             var dialogResult = await dialogTask;
@@ -75,7 +83,7 @@ public class ShellCommand : IShellCommand
                 throw new OperationCanceledException();
             }
 
-            return (float)(numberInput.GetValue(Avalonia.Controls.NumericUpDown.ValueProperty) ?? 0);
+            return (float)(numberInput.GetValue(Controls.NumericUpDown.ValueProperty) ?? 0);
         }).GetAwaiter().GetResult();
     }
 
@@ -115,7 +123,7 @@ public class ShellCommand : IShellCommand
                 Gesture = new Input.KeyGesture(Input.Key.Enter)
             });
 
-            var dialogTask = dialog.ShowDialog<DialogResult?>(service.GetRequiredService<MainWindow>());
+            var dialogTask = dialog.ShowDialog<DialogResult?>(dialogOwnerWindow);
             textInput.Focus();
 
             var dialogResult = await dialogTask;
@@ -131,7 +139,7 @@ public class ShellCommand : IShellCommand
 
     public void ShowMessageBox(string message, int? icon = null)
     {
-        var content = new MessageContent { Message = message };
+        var content = new MessageContent { Message = message, Owner = dialogOwnerWindow };
         if (icon != null)
         {
             content.Icon = (MessageBoxIcon)icon.Value;
