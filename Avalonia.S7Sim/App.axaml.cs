@@ -5,6 +5,7 @@ using Avalonia.S7Sim.Services;
 using Avalonia.S7Sim.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,6 +45,13 @@ namespace Avalonia.S7Sim
         {
             s_host = Host.CreateDefaultBuilder()
                 .ConfigureServices(RegistServicesColleciton.Regist)
+                .ConfigureLogging((ctx, loggerBuilder) =>
+                {
+                    if (ctx.HostingEnvironment.IsDevelopment())
+                    {
+                        loggerBuilder.AddDebug();
+                    }
+                })
                 .Build();
             ServiceProvider = s_host.Services;
             ServiceProvider.WeakupService();

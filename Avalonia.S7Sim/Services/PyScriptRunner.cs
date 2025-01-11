@@ -1,4 +1,5 @@
 ﻿using IronPython.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Scripting.Hosting;
 using S7Sim.Services;
 using S7Sim.Services.Scripts;
@@ -7,6 +8,7 @@ namespace Avalonia.S7Sim.Services;
 
 public class PyScriptRunner : ScriptRunner
 {
+    private readonly ILogger<PyScriptRunner> logger;
     private readonly IS7DataBlockService _plcDB;
     private readonly IS7MBService _plcMB;
     private readonly IS7ServerService _server;
@@ -14,8 +16,9 @@ public class PyScriptRunner : ScriptRunner
 
     public override ScriptEngine Engine { get; }
 
-    public PyScriptRunner(IS7DataBlockService plcDB, IS7MBService plcMB, IS7ServerService plcServer, IShellCommand shellCommand)
+    public PyScriptRunner(ILogger<PyScriptRunner> logger, IS7DataBlockService plcDB, IS7MBService plcMB, IS7ServerService plcServer, IShellCommand shellCommand)
     {
+        this.logger = logger;
         this._plcDB = plcDB;
         this._plcMB = plcMB;
         this._server = plcServer;
@@ -33,6 +36,7 @@ public class PyScriptRunner : ScriptRunner
         scope.SetVariable("DB", this._plcDB);
         scope.SetVariable("MB", this._plcMB);
         scope.SetVariable("shell", _shellCommand);
+        scope.SetVariable("Logger", logger);
 
         scope.SetVariable("__PY_ENGINE__", this.Engine);
 

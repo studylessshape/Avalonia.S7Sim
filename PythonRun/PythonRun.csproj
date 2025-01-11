@@ -14,6 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="predefined\s7svrsim\hint.py" />
+    <Compile Include="predefined\s7svrsim\_init_.py" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="IronPython" Version="3.4.2" />
     <PackageReference Include="IronPython.StdLib" Version="3.4.2" />
   </ItemGroup>

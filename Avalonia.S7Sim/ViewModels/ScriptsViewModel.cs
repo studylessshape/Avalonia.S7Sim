@@ -54,6 +54,11 @@ public partial class ScriptsViewModel : ViewModelBase
                 {
                     Path = Path.Combine(processPath, "DLLs"),
                     CanDelete = false
+                },
+                new PathForView()
+                {
+                    Path = Path.Combine(processPath, "predefined/s7svrsim"),
+                    CanDelete = false
                 }]);
             }
         }

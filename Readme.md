@@ -4,7 +4,7 @@ This is the [S7SvrSim](https://github.com/newbienewbie/S7SvrSim) implemented by 
 
 ## Features
 
-Same of [S7SvrSim](https://github.com/newbienewbie/S7SvrSim)
+Same as [S7SvrSim](https://github.com/newbienewbie/S7SvrSim)
 
 ## Todo
 

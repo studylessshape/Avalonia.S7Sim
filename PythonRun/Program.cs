@@ -26,6 +26,12 @@ IShellCommand shellCommand = new ShellCommand(envSets.NamedPipe, "shell");
 var engine = Python.CreateEngine();
 
 List<string> searchPaths = [.. engine.GetSearchPaths()];
+var processPath = Path.GetDirectoryName(Environment.ProcessPath);
+if (!string.IsNullOrEmpty(processPath))
+{
+    searchPaths.Add(Path.Combine(processPath, "predefined/s7svrsim"));
+}
+
 searchPaths.AddRange(envSets.EnvDirectories);
 engine.SetSearchPaths(searchPaths);
 
