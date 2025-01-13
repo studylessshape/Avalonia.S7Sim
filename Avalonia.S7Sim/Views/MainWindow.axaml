@@ -13,7 +13,6 @@
               Title="S7 Simulate by Avalonia"
               IsTitleBarVisible="True"
               x:Name="Root_Window"
-              x:DataType="vm:MainWindowViewModel"
               >
 
     <Design.DataContext>

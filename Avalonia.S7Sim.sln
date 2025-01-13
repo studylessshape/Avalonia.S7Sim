@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArgsCommand", "ArgsCommand\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PipeProtocol", "PipeProtocol\PipeProtocol.csproj", "{440B613B-3316-4FEC-B0F0-FF10C5B3B543}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PythonRun.Test", "PythonRun.Test\PythonRun.Test.csproj", "{6C8D47DE-B4D6-4EA2-93B1-F0D68A377FFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{440B613B-3316-4FEC-B0F0-FF10C5B3B543}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{440B613B-3316-4FEC-B0F0-FF10C5B3B543}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{440B613B-3316-4FEC-B0F0-FF10C5B3B543}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C8D47DE-B4D6-4EA2-93B1-F0D68A377FFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C8D47DE-B4D6-4EA2-93B1-F0D68A377FFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C8D47DE-B4D6-4EA2-93B1-F0D68A377FFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C8D47DE-B4D6-4EA2-93B1-F0D68A377FFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using CommandMoudles = System.Collections.Generic.Dictionary<string, object>;
 
 namespace PipeProtocol
 {
@@ -80,6 +83,111 @@ namespace PipeProtocol
                 Method = method,
                 Parameters = parameters.ToArray()
             };
+        }
+
+        public PipeResponse RunCommand(CommandMoudles commands)
+        {
+            if (!commands.TryGetValue(this.Module, out object module))
+            {
+                return new PipeResponse()
+                {
+                    ErrCode = (int)ErrCodes.ModuleNotFound,
+                };
+            }
+
+            var method = module.GetType().GetMethod(this.Method);
+            if (method == null)
+            {
+                return new PipeResponse()
+                {
+                    ErrCode = (int)ErrCodes.MethodNotFound,
+                };
+            }
+
+            object[] parameters = new object[this.Parameters.Length];
+
+            try
+            {
+                var methodParameters = method.GetParameters();
+
+                var normalParamCount = methodParameters.Where(p => !p.HasDefaultValue).Count();
+                var defaultParamCount = methodParameters.Where(p => p.HasDefaultValue).Count();
+                var commandParamCount = this.Parameters.Length;
+                if (commandParamCount > (normalParamCount + defaultParamCount))
+                {
+                    return new PipeResponse()
+                    {
+                        ErrCode = (int)ErrCodes.IncorrectParameterCount,
+                    };
+                }
+
+                foreach ((var para, var index) in methodParameters.Select((p, i) => (p, i)))
+                {
+                    if (index >= parameters.Length)
+                    {
+                        break;
+                    }
+
+                    var paraStr = this.Parameters[index];
+                    var paraType = para.ParameterType;
+
+                    if (paraStr.Trim().Equals("null", StringComparison.OrdinalIgnoreCase))
+                    {
+                        parameters[index] = null;
+                    }
+                    else if (paraType == typeof(string))
+                    {
+                        parameters[index] = paraStr[1..(paraStr.Length - 1)].Replace("\\\"", "\"");
+                    }
+                    else
+                    {
+                        parameters[index] = ParseParameter(paraType, paraStr);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return new PipeResponse()
+                {
+                    ErrCode = (int)ErrCodes.WhenBuildParameters,
+                    Message = e.InnerException != null ? e.InnerException.Message : e.Message
+                };
+            }
+
+            try
+            {
+                var returnObject = method.Invoke(module, parameters);
+
+                var response = new PipeResponse()
+                {
+                    ErrCode = 0,
+                };
+
+                if (method.ReturnType != typeof(void))
+                {
+                    response.Message = returnObject?.ToString();
+                }
+
+                return response;
+            }
+            catch (Exception e)
+            {
+                return new PipeResponse()
+                {
+                    ErrCode = (int)ErrCodes.WhenRunCommand,
+                    Message = e.InnerException != null ? e.InnerException.Message : e.Message
+                };
+            }
+        }
+
+        public static object ParseParameter(Type paraType, string paraStr)
+        {
+            var method = paraType.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+            if (method == null && paraType.Name == typeof(int?).Name)
+            {
+                method = paraType.GenericTypeArguments[0].GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+            }
+            return method == null ? throw new Exception("Only support primary type") : method.Invoke(paraType, new object[] { paraStr });
         }
     }
 }

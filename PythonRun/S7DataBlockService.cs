@@ -1,9 +1,8 @@
-﻿using PipeProtocol;
-using S7Sim.Services;
+﻿using S7Sim.Services;
 
 namespace PythonRun
 {
-    internal class S7DataBlockService : IS7DataBlockService
+    public class S7DataBlockService : IS7DataBlockService
     {
         private readonly string pipeName;
 

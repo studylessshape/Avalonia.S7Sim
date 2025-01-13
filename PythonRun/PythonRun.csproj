@@ -14,8 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="predefined\s7svrsim\hint.py" />
-    <Compile Include="predefined\s7svrsim\_init_.py" />
+    <Content Include="predefined\s7svrsim\hint.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="predefined\s7svrsim\_init_.py">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

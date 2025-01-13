@@ -1,4 +1,6 @@
-﻿namespace Avalonia.S7Sim.Services
+﻿using System.Threading.Tasks;
+
+namespace PipeProtocol
 {
     public interface IPipeCommandHost : IPipeHost
     {

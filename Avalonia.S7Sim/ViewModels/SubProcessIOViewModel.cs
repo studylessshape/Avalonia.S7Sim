@@ -2,7 +2,6 @@
 using Avalonia.S7Sim.Services;
 using Avalonia.S7Sim.Services.Shell;
 using CommunityToolkit.Mvvm.ComponentModel;
-using IronPython.Runtime.Operations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Scripting.Utils;
 using S7Sim.Services;

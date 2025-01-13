@@ -31,7 +31,9 @@ namespace Avalonia.S7Sim.ViewModels
             {
                 invoke.Invoke(message.Message, message.Title, message.Icon, message.Buttons, message.StyleClass);
             }
+#pragma warning disable IDE0059 // 不需要赋值
             catch (Exception ex)
+#pragma warning restore IDE0059 // 不需要赋值
             {
                 throw;
             }

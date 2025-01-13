@@ -2,7 +2,7 @@
 
 namespace PythonRun
 {
-    internal class ShellCommand : IShellCommand
+    public class ShellCommand : IShellCommand
     {
         private readonly string pipeName;
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
@@ -168,6 +169,30 @@ namespace PipeProtocol
             var head = await ReadHeadAsync(pipeStream, stopToken);
 
             return await ReadContentAsync(pipeStream, head.ContentLength, stopToken);
+        }
+
+        public static async Task<byte[]> ReadRawAsync(Stream pipeStream, CancellationToken stopToken = default)
+        {
+            var head = await ReadHeadAsync(pipeStream, stopToken);
+            var length = head.ContentLength;
+
+            List<byte> bytes = new List<byte>();
+
+            while (length > 0 && stopToken.IsCancellationRequested == false)
+            {
+                var buffer = new byte[1024].AsMemory();
+                var readLength = await pipeStream.ReadAsync(buffer, stopToken);
+                if (readLength == 0)
+                {
+                    break;
+                }
+
+                bytes.AddRange(buffer.ToArray()[..readLength]);
+
+                length -= readLength;
+            }
+
+            return bytes.ToArray();
         }
 
         public static PipeCommand ReadCommand(Stream pipeStream, CancellationToken stopToken = default)
