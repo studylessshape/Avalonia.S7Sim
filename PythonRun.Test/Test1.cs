@@ -25,28 +25,33 @@ namespace PythonRun.Test
                 return;
             }
 
-            CancellationTokenSource stopTokenSource = new CancellationTokenSource();
+            ControlCommand controlCommand = new ControlCommand();
 
-            var scope = Program.CreateScriptEnv(envSets, stopTokenSource);
+            var scope = Program.CreateScriptEnv(envSets, controlCommand);
 
-            StartPipeHost(stopTokenSource.Token);
+            StartPipeHost(controlCommand.StopToken);
 
             Program.RunScript(envSets.FilePath, scope);
 
-            Program.Release(stopTokenSource);
+            Avalonia.S7Sim.Services.ControlCommand windowsControl = new Avalonia.S7Sim.Services.ControlCommand($"{pipeName}_py");
+
+            windowsControl.Stop();
+
+            Program.Release(controlCommand);
         }
 
-        void StartPipeHost(CancellationToken ct)
+        void StartPipeHost(CancellationToken stopToken)
         {
             PipeHost pipeHost = new();
+
             var s7server = new S7ServerService();
             s7server.StartServerAsync(IPAddress.Parse("127.0.0.1"),
             [
                 new AreaConfig()
                 {
-                AreaKind = AreaKind.DB,
-                BlockNumber = 101,
-                BlockSize = 1000,
+                    AreaKind = AreaKind.DB,
+                    BlockNumber = 101,
+                    BlockSize = 1000,
                 },
                 new AreaConfig()
                 {
@@ -58,7 +63,7 @@ namespace PythonRun.Test
             var s7dbService = new Avalonia.S7Sim.Services.S7DataBlockService(s7server);
             pipeHost.RegistCommand("shell", new ShellCommand());
             pipeHost.RegistCommand("DB", s7dbService);
-            pipeHost.RunAsync(pipeName, ct);
+            pipeHost.RunAsync(pipeName, stopToken);
         }
     }
 }

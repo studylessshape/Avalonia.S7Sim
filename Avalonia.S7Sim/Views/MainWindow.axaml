@@ -32,6 +32,8 @@
                    Text="{Binding #Root_Window.Title}"
                    Theme="{DynamicResource TitleTextBlock}"
                    VerticalAlignment="Center"
+                   IsHitTestVisible="False"
+                   IsTabStop="False"
                    />
     </u:UrsaWindow.TitleBarContent>
     <Border BorderThickness="0 2 0 0"
@@ -57,6 +59,7 @@
             </TabControl>
             <GridSplitter Grid.Column="1"
                           ResizeDirection="Columns"
+                          IsTabStop="False"
                           />
             <ContentControl x:Name="PART_LogPanel"
                             Grid.Column="2"

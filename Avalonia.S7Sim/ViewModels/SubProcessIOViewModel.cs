@@ -2,10 +2,12 @@
 using Avalonia.S7Sim.Services;
 using Avalonia.S7Sim.Services.Shell;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Scripting.Utils;
 using S7Sim.Services;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -31,13 +33,13 @@ namespace Avalonia.S7Sim.ViewModels
         private readonly PipeHost? pipeHost;
         private readonly IS7DataBlockService? s7DataBlockService;
         private bool forceExit = false;
+        private ControlCommand? controlCommand;
 
         public SubProcessIOViewModel()
         {
             var serviceProvider = App.AppCurrent?.ServiceProvider;
             scriptsViewModel = serviceProvider?.GetRequiredService<ScriptsViewModel>();
             pipeHost = serviceProvider?.GetRequiredService<PipeHost>();
-
         }
 
         public void SetOwnerWindow(Window? window)
@@ -70,6 +72,8 @@ namespace Avalonia.S7Sim.ViewModels
             string pipeName = GenPipeName();
             process.StartInfo.ArgumentList.Add("-n");
             process.StartInfo.ArgumentList.Add(pipeName);
+
+            controlCommand = new ControlCommand($"{pipeName}_py");
 
             pipeHost?.RunAsync(pipeName, tokenSource.Token);
             StdOut += $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} Info] NamedPipe run on name of '{pipeName}'{Environment.NewLine}";
@@ -146,6 +150,7 @@ namespace Avalonia.S7Sim.ViewModels
             }
         }
 
+        [RelayCommand]
         public void Stop(bool force = false)
         {
             try
@@ -153,18 +158,66 @@ namespace Avalonia.S7Sim.ViewModels
                 forceExit = force;
                 tokenSource.Cancel();
                 tokenSource.Dispose();
+
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
                 if (force)
                 {
                     SubProcess?.Kill();
                 }
                 else
                 {
+                    controlCommand?.Stop();
                     SubProcess?.WaitForExit();
                 }
             }
             catch (Exception)
             {
             }
+        }
+
+        [RelayCommand]
+        public async Task AsyncStop(bool force = false)
+        {
+            try
+            {
+                forceExit = force;
+                await tokenSource.CancelAsync();
+                tokenSource.Dispose();
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
+                if (force)
+                {
+                    SubProcess?.Kill();
+                }
+                else
+                {
+                    if (controlCommand != null)
+                    {
+                        await controlCommand.StopAsync();
+                    }
+                    SubProcess?.WaitForExit();
+                }
+            }
+            catch (Exception)
+            {
+            }
+        }
+
+        [RelayCommand]
+        private void ReStart(List<bool> para)
+        {
+            
         }
     }
 }

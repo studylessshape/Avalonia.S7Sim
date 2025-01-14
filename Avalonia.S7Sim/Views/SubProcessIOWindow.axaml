@@ -4,11 +4,13 @@
               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
               xmlns:vm="using:Avalonia.S7Sim.ViewModels"
               xmlns:u="using:Ursa.Controls"
+              xmlns:scg="using:System.Collections.Generic"
+              xmlns:sys="using:System"
               mc:Ignorable="d"
               d:DesignWidth="600"
-              d:DesignHeight="350"
+              d:DesignHeight="400"
               Width="600"
-              Height="350"
+              Height="400"
               x:Class="Avalonia.S7Sim.Views.SubProcessIOWindow"
               Title="SubProcessIOWindow"
               x:Name="Root_Window"
@@ -21,6 +23,9 @@
                    Text="{Binding #Root_Window.Title}"
                    Theme="{DynamicResource TitleTextBlock}"
                    VerticalAlignment="Center"
+                   Focusable="False"
+                   IsHitTestVisible="False"
+                   IsTabStop="False"
                    />
     </u:UrsaWindow.TitleBarContent>
     <Border BorderThickness="0 2 0 0"
@@ -28,20 +33,46 @@
             Padding="10"
             BorderBrush="{DynamicResource BorderCardBorderBrush}"
             >
-        <ScrollViewer x:Name="LOG_ScrollViewer"
-                      u:ScrollTo.Direction="Bottom"
-                      HorizontalScrollBarVisibility="Disabled"
-                      VerticalScrollBarVisibility="Auto"
-                      >
-            <SelectableTextBlock Text="{Binding StdOut}"
-                                 x:Name="LOG_LogContent"
-                                 >
-                <SelectableTextBlock.Styles>
-                    <Style Selector="SelectableTextBlock">
-                        <Setter Property="TextWrapping" Value="WrapWithOverflow" />
-                    </Style>
-                </SelectableTextBlock.Styles>
-            </SelectableTextBlock>
-        </ScrollViewer>
+        <Grid RowDefinitions="auto,auto,*">
+            <Menu>
+                <MenuItem Header="ReStart"
+                          Command="{Binding ReStartCommand}"
+                          >
+                    <MenuItem.CommandParameter>
+                        <scg:List x:TypeArguments="sys:Boolean">
+                            <x:True />
+                            <x:False />
+                        </scg:List>
+                    </MenuItem.CommandParameter>
+                </MenuItem>
+                <MenuItem Header="Stop"
+                          Command="{Binding StopCommand}"
+                          CommandParameter="{x:False}"
+                          />
+                <MenuItem Header="Kill"
+                          Command="{Binding StopCommand}"
+                          CommandParameter="{x:True}"
+                          />
+            </Menu>
+            <GridSplitter Grid.Row="1"
+                          IsEnabled="False"
+                          />
+            <ScrollViewer Grid.Row="2"
+                          x:Name="LOG_ScrollViewer"
+                          u:ScrollTo.Direction="Bottom"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto"
+                          >
+                <SelectableTextBlock Text="{Binding StdOut}"
+                                     x:Name="LOG_LogContent"
+                                     >
+                    <SelectableTextBlock.Styles>
+                        <Style Selector="SelectableTextBlock">
+                            <Setter Property="TextWrapping" Value="WrapWithOverflow" />
+                        </Style>
+                    </SelectableTextBlock.Styles>
+                </SelectableTextBlock>
+            </ScrollViewer>
+        </Grid>
     </Border>
 </u:UrsaWindow>

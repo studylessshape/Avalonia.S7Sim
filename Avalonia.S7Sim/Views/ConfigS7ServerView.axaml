@@ -72,7 +72,6 @@
             <DataGrid ItemsSource="{Binding S7Servers}"
                       IsReadOnly="False"
                       x:Name="DATA_Root"
-                      IsTabStop="True"
                       GridLinesVisibility="All"
                       >
                 <DataGrid.Height>
@@ -84,6 +83,7 @@
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="类型"
                                             MinWidth="65"
+                                            CanUserSort="True"
                                             >
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>

@@ -12,26 +12,7 @@ namespace PipeProtocol
 {
     public static class ProtocolTools
     {
-        public static PipeResponse SendCommand(string pipeName, string module, string methodName, params string[] parameters)
-        {
-            using var clientStream = new NamedPipeClientStream(pipeName);
-            clientStream.Connect(10);
-
-            ProtocolTools.SendCommand(clientStream, new PipeCommand()
-            {
-                Module = module,
-                Method = methodName,
-                Parameters = parameters ?? Array.Empty<string>(),
-            });
-
-            var response = ProtocolTools.ReadResponse(clientStream);
-            if (response.ErrCode != 0)
-            {
-                throw new Exception($"Execute command get code {response.ErrCode}, error message: {response.Message}");
-            }
-
-            return response;
-        }
+        
 
         public static byte[] Read(Stream pipeStream, int count)
         {
@@ -87,9 +68,51 @@ namespace PipeProtocol
             }
         }
 
+        public static PipeResponse SendCommand(string pipeName, string module, string methodName, params string[] parameters)
+        {
+            using var clientStream = new NamedPipeClientStream(pipeName);
+            clientStream.Connect(10);
+
+            ProtocolTools.SendCommand(clientStream, new PipeCommand()
+            {
+                Module = module,
+                Method = methodName,
+                Parameters = parameters ?? Array.Empty<string>(),
+            });
+
+            var response = ProtocolTools.ReadResponse(clientStream);
+            if (response.ErrCode != 0)
+            {
+                throw new Exception($"Execute command get code {response.ErrCode}, error message: {response.Message}");
+            }
+
+            return response;
+        }
+
         public static void SendCommand(Stream pipeStream, PipeCommand pipeCommand)
         {
             Send(pipeStream, pipeCommand.ToCommand());
+        }
+
+        public static async Task<PipeResponse> SendCommandAsync(string pipeName, string module, string methodName, string[] parameters, CancellationToken stopToken = default)
+        {
+            using var clientStream = new NamedPipeClientStream(pipeName);
+            clientStream.Connect(10);
+
+            await ProtocolTools.SendCommandAsync(clientStream, new PipeCommand()
+            {
+                Module = module,
+                Method = methodName,
+                Parameters = parameters ?? Array.Empty<string>(),
+            });
+
+            var response = await ProtocolTools.ReadResponseAsync(clientStream, stopToken);
+            if (response.ErrCode != 0)
+            {
+                throw new Exception($"Execute command get code {response.ErrCode}, error message: {response.Message}");
+            }
+
+            return response;
         }
 
         public static async Task SendCommandAsync(Stream pipeStream, PipeCommand pipeCommand)

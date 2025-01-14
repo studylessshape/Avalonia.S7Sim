@@ -1,5 +1,4 @@
 ﻿using IronPython.Hosting;
-using Microsoft.Scripting;
 using Microsoft.Scripting.Hosting;
 using S7Sim.Services;
 using S7Sim.Utils.LogHelper;
@@ -16,12 +15,12 @@ namespace PythonRun
             {
                 return;
             }
-            CancellationTokenSource stopTokenSource = new CancellationTokenSource();
+            ControlCommand controlCommand = new ControlCommand();
 
-            var scope = CreateScriptEnv(envSets, stopTokenSource);
+            var scope = CreateScriptEnv(envSets, controlCommand);
             RunScript(envSets.FilePath, scope);
 
-            Release(stopTokenSource);
+            Release(controlCommand);
         }
 
         public static EnvSets? ParseArgs(string[] args)
@@ -46,11 +45,13 @@ namespace PythonRun
             return envSets;
         }
 
-        public static ScriptScope CreateScriptEnv(EnvSets envSets, CancellationTokenSource stopTokenSource)
+        public static ScriptScope CreateScriptEnv(EnvSets envSets, ControlCommand controlCommand)
         {
+            var stopToken = controlCommand.StopToken;
 
             PipeHost pipeHost = new();
-            pipeHost.RunAsync($"{envSets.NamedPipe}_py", stopTokenSource.Token);
+            pipeHost.RegistCommand("control", controlCommand);
+            pipeHost.RunAsync($"{envSets.NamedPipe}_py", stopToken);
 
             IS7DataBlockService dbService = new S7DataBlockService(envSets.NamedPipe, "DB");
             IShellCommand shellCommand = new ShellCommand(envSets.NamedPipe, "shell");
@@ -74,6 +75,7 @@ namespace PythonRun
             scope.SetVariable("shell", shellCommand);
             scope.SetVariable("Logger", ConsoLog.Instance);
             scope.SetVariable("__PY_ENGINE__", engine);
+            scope.SetVariable("ct", stopToken);
 
             return scope;
         }
@@ -85,11 +87,11 @@ namespace PythonRun
             code.Execute(scope);
         }
 
-        public static void Release(CancellationTokenSource source)
+        public static void Release(ControlCommand controlCommand)
         {
             try
             {
-                source.Cancel();
+                controlCommand.Stop();
             }
             catch (Exception)
             {
