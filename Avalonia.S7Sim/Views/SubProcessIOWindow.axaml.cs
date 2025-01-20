@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.S7Sim.ViewModels;
 using Avalonia.Threading;
 using System;
@@ -17,8 +18,6 @@ public partial class SubProcessIOWindow : UrsaWindow
     {
         InitializeDataContext(viewModel);
         InitializeComponent();
-        //this.LOG_ScrollViewer.AddHandler(ScrollViewer.ScrollChangedEvent, ScrollViewer_ScrollChanged);
-        //this.LOG_ScrollViewer.ScrollChanged += ScrollViewer_ScrollChanged;
     }
 
     private void InitializeDataContext(SubProcessIOViewModel viewModel)
@@ -49,7 +48,10 @@ public partial class SubProcessIOWindow : UrsaWindow
             // When proptery changed and will call `ScrollToEnd` method, it will get error if directly call the method.
             Dispatcher.UIThread.Invoke(() =>
             {
-                LOG_ScrollViewer.ScrollToEnd();
+                if (LOG_ScrollViewer.Offset == LOG_ScrollViewer.ScrollBarMaximum)
+                {
+                    LOG_ScrollViewer.ScrollToEnd();
+                }
             });
         }
     }

@@ -1,9 +1,11 @@
 ﻿using Avalonia.Controls;
 using Avalonia.S7Sim.Services;
 using Avalonia.S7Sim.Services.Shell;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Scripting.Utils;
 using S7Sim.Services;
 using System;
@@ -29,6 +31,10 @@ namespace Avalonia.S7Sim.ViewModels
         public event OnStringValueChangedDelegate? OnStdOutChangedEvent;
 
         private readonly object stdOutLock = new();
+        public object StdOutLock => stdOutLock;
+
+        public TextBox? LogBox { get; set; }
+
         private readonly ScriptsViewModel? scriptsViewModel;
         private readonly PipeHost? pipeHost;
         private readonly IS7DataBlockService? s7DataBlockService;
@@ -122,7 +128,7 @@ namespace Avalonia.S7Sim.ViewModels
                     var readLength = await SubProcess.StandardOutput.ReadAsync(buffer, stopToken).ConfigureAwait(false);
                     if (readLength > 0)
                     {
-                        lock (stdOutLock)
+                        lock (StdOutLock)
                         {
                             StdOut += new string(buffer.ToArray()[..readLength]);
                         }
@@ -141,7 +147,7 @@ namespace Avalonia.S7Sim.ViewModels
                     var readLength = await SubProcess.StandardError.ReadAsync(buffer, stopToken);
                     if (readLength > 0)
                     {
-                        lock (stdOutLock)
+                        lock (StdOutLock)
                         {
                             StdOut += new string(buffer.ToArray()[..readLength]);
                         }

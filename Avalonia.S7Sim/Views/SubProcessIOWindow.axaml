@@ -34,26 +34,44 @@
             BorderBrush="{DynamicResource BorderCardBorderBrush}"
             >
         <Grid RowDefinitions="auto,auto,*">
-            <Menu>
-                <MenuItem Header="ReStart"
-                          Command="{Binding ReStartCommand}"
-                          >
-                    <MenuItem.CommandParameter>
+            <StackPanel HorizontalAlignment="Left"
+                        Orientation="Horizontal"
+                        Spacing="5"
+                        >
+                <Button MaxWidth="40"
+                        Command="{Binding ReStartCommand}"
+                        ToolTip.Tip="重新运行"
+                        Background="Transparent"
+                        >
+                    <Button.CommandParameter>
                         <scg:List x:TypeArguments="sys:Boolean">
                             <x:True />
                             <x:False />
                         </scg:List>
-                    </MenuItem.CommandParameter>
-                </MenuItem>
-                <MenuItem Header="Stop"
-                          Command="{Binding StopCommand}"
-                          CommandParameter="{x:False}"
-                          />
-                <MenuItem Header="Kill"
-                          Command="{Binding StopCommand}"
-                          CommandParameter="{x:True}"
-                          />
-            </Menu>
+                    </Button.CommandParameter>
+                    <PathIcon Data="{StaticResource retry}" />
+                </Button>
+                <Button Command="{Binding StopCommand}"
+                        CommandParameter="{x:False}"
+                        MaxWidth="40"
+                        ToolTip.Tip="停止"
+                        Classes="Warning"
+                        Background="Transparent"
+                        >
+                    <PathIcon Data="{StaticResource stop}" />
+                </Button>
+                <Button MaxWidth="40"
+                        Command="{Binding StopCommand}"
+                        CommandParameter="{x:True}"
+                        ToolTip.Tip="强制终止"
+                        Classes="Danger"
+                        Background="Transparent"
+                        >
+                    <PathIcon MaxWidth="20"
+                              Data="{StaticResource x}"
+                              />
+                </Button>
+            </StackPanel>
             <GridSplitter Grid.Row="1"
                           IsEnabled="False"
                           />
@@ -65,13 +83,8 @@
                           >
                 <SelectableTextBlock Text="{Binding StdOut}"
                                      x:Name="LOG_LogContent"
-                                     >
-                    <SelectableTextBlock.Styles>
-                        <Style Selector="SelectableTextBlock">
-                            <Setter Property="TextWrapping" Value="WrapWithOverflow" />
-                        </Style>
-                    </SelectableTextBlock.Styles>
-                </SelectableTextBlock>
+                                     TextWrapping="Wrap"
+                                     />
             </ScrollViewer>
         </Grid>
     </Border>
