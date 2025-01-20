@@ -43,12 +43,6 @@
                         ToolTip.Tip="重新运行"
                         Background="Transparent"
                         >
-                    <Button.CommandParameter>
-                        <scg:List x:TypeArguments="sys:Boolean">
-                            <x:True />
-                            <x:False />
-                        </scg:List>
-                    </Button.CommandParameter>
                     <PathIcon Data="{StaticResource retry}" />
                 </Button>
                 <Button Command="{Binding StopCommand}"

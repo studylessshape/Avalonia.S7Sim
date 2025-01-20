@@ -1,11 +1,9 @@
 ﻿using Avalonia.Controls;
 using Avalonia.S7Sim.Services;
 using Avalonia.S7Sim.Services.Shell;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Scripting.Utils;
 using S7Sim.Services;
 using System;
@@ -20,7 +18,7 @@ namespace Avalonia.S7Sim.ViewModels
     public partial class SubProcessIOViewModel : ViewModelBase
     {
         public Process? SubProcess { get; private set; }
-        private readonly CancellationTokenSource tokenSource = new();
+        private CancellationTokenSource tokenSource = new();
 
         public event Action? CloseWindow;
 
@@ -37,9 +35,10 @@ namespace Avalonia.S7Sim.ViewModels
 
         private readonly ScriptsViewModel? scriptsViewModel;
         private readonly PipeHost? pipeHost;
-        private readonly IS7DataBlockService? s7DataBlockService;
         private bool forceExit = false;
+        private bool isRestart = false;
         private ControlCommand? controlCommand;
+        private string? filePath;
 
         public SubProcessIOViewModel()
         {
@@ -69,32 +68,46 @@ namespace Avalonia.S7Sim.ViewModels
 
         public void StartScript(string filePath)
         {
-            Process process = new Process();
-            process.StartInfo.FileName = "PythonRun.exe";
+            tokenSource = new();
 
+            Process process = new Process();
+            // Program file
+            process.StartInfo.FileName = "PythonRun.exe";
+            // Script file path
             process.StartInfo.ArgumentList.Add("-f");
             process.StartInfo.ArgumentList.Add(filePath);
-
+            this.filePath = filePath;
+            // Namedpipe target
             string pipeName = GenPipeName();
             process.StartInfo.ArgumentList.Add("-n");
             process.StartInfo.ArgumentList.Add(pipeName);
-
+            // Remote stop command by namedpipe
             controlCommand = new ControlCommand($"{pipeName}_py");
 
             pipeHost?.RunAsync(pipeName, tokenSource.Token);
+
             StdOut += $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} Info] NamedPipe run on name of '{pipeName}'{Environment.NewLine}";
+            // Search path
             process.StartInfo.ArgumentList.Add("-s");
             process.StartInfo.ArgumentList.AddRange(scriptsViewModel?.EngineSearchPaths.Select(path => path.Path) ?? []);
 
+            #region Process Initialize
             SubProcess = process;
             SubProcess.StartInfo.UseShellExecute = false;
             SubProcess.StartInfo.CreateNoWindow = true;
             SubProcess.StartInfo.RedirectStandardError = true;
             SubProcess.StartInfo.RedirectStandardInput = true;
             SubProcess.StartInfo.RedirectStandardOutput = true;
+            #endregion
+
             StdOut += $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} Info] {process.StartInfo.FileName} {string.Join(' ', process.StartInfo.ArgumentList)}{Environment.NewLine}";
             SubProcess.Start();
             StartUpdate();
+        }
+
+        private void Initialize(string pipeName)
+        {
+
         }
 
         public void StartUpdate()
@@ -107,13 +120,19 @@ namespace Avalonia.S7Sim.ViewModels
                 if (!forceExit)
                 {
                     Stop();
-                    lock (stdOutLock)
+                    if (!isRestart)
                     {
-                        StdOut += "\nThis window will be closed in 5 Seconds...";
+                        lock (stdOutLock)
+                        {
+                            StdOut += "\nThis window will be closed in 5 Seconds...";
+                        }
+                        Task.Delay(TimeSpan.FromSeconds(5)).Wait();
                     }
-                    Task.Delay(TimeSpan.FromSeconds(5)).Wait();
                 }
-                CloseWindow?.Invoke();
+                if (!isRestart)
+                {
+                    CloseWindow?.Invoke();
+                }
             });
             thread.Start();
         }
@@ -162,6 +181,7 @@ namespace Avalonia.S7Sim.ViewModels
             try
             {
                 forceExit = force;
+                controlCommand?.Stop();
                 tokenSource.Cancel();
                 tokenSource.Dispose();
 
@@ -178,7 +198,6 @@ namespace Avalonia.S7Sim.ViewModels
                 }
                 else
                 {
-                    controlCommand?.Stop();
                     SubProcess?.WaitForExit();
                 }
             }
@@ -193,6 +212,10 @@ namespace Avalonia.S7Sim.ViewModels
             try
             {
                 forceExit = force;
+                if (controlCommand != null)
+                {
+                    await controlCommand.StopAsync();
+                }
                 await tokenSource.CancelAsync();
                 tokenSource.Dispose();
             }
@@ -208,10 +231,6 @@ namespace Avalonia.S7Sim.ViewModels
                 }
                 else
                 {
-                    if (controlCommand != null)
-                    {
-                        await controlCommand.StopAsync();
-                    }
                     SubProcess?.WaitForExit();
                 }
             }
@@ -221,9 +240,17 @@ namespace Avalonia.S7Sim.ViewModels
         }
 
         [RelayCommand]
-        private void ReStart(List<bool> para)
+        private async Task ReStartAsync()
         {
-            
+            isRestart = true;
+            await AsyncStop();
+
+            StdOut += $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} Warn] Restart .....\r\n";
+
+            if (filePath != null)
+            {
+                StartScript(filePath);
+            }
         }
     }
 }
