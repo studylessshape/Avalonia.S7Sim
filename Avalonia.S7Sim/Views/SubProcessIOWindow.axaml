@@ -45,8 +45,7 @@
                         >
                     <PathIcon Data="{StaticResource retry}" />
                 </Button>
-                <Button Command="{Binding StopCommand}"
-                        CommandParameter="{x:False}"
+                <Button Command="{Binding StopCCommand}"
                         MaxWidth="40"
                         ToolTip.Tip="停止"
                         Classes="Warning"
@@ -55,8 +54,7 @@
                     <PathIcon Data="{StaticResource stop}" />
                 </Button>
                 <Button MaxWidth="40"
-                        Command="{Binding StopCommand}"
-                        CommandParameter="{x:True}"
+                        Command="{Binding KillCommand}"
                         ToolTip.Tip="强制终止"
                         Classes="Danger"
                         Background="Transparent"

@@ -25,6 +25,14 @@ namespace Avalonia.S7Sim.ViewModels
         [ObservableProperty]
         private string stdOut = "";
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanExecuteControl))]
+        [NotifyCanExecuteChangedFor(nameof(StopCCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ReStartCommand))]
+        private bool inProcess;
+
+        public bool CanExecuteControl => !InProcess;
+
         public delegate void OnStringValueChangedDelegate(string? oldValue, string newValue);
         public event OnStringValueChangedDelegate? OnStdOutChangedEvent;
 
@@ -101,25 +109,23 @@ namespace Avalonia.S7Sim.ViewModels
             #endregion
 
             StdOut += $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} Info] {process.StartInfo.FileName} {string.Join(' ', process.StartInfo.ArgumentList)}{Environment.NewLine}";
+
+            isRestart = false;
+
             SubProcess.Start();
             StartUpdate();
         }
 
-        private void Initialize(string pipeName)
-        {
-
-        }
-
         public void StartUpdate()
         {
-            var thread = new Thread(() =>
+            var thread = new Thread(async () =>
             {
                 _ = UpdateStandardOut(tokenSource.Token);
                 _ = UpdateStandardError(tokenSource.Token);
                 SubProcess?.WaitForExit();
                 if (!forceExit)
                 {
-                    Stop();
+                    await StopAsync();
                     if (!isRestart)
                     {
                         lock (stdOutLock)
@@ -175,21 +181,8 @@ namespace Avalonia.S7Sim.ViewModels
             }
         }
 
-        [RelayCommand]
-        public void Stop(bool force = false)
+        void ProcessExit(bool force = false)
         {
-            try
-            {
-                forceExit = force;
-                controlCommand?.Stop();
-                tokenSource.Cancel();
-                tokenSource.Dispose();
-
-            }
-            catch (Exception)
-            {
-            }
-
             try
             {
                 if (force)
@@ -206,13 +199,33 @@ namespace Avalonia.S7Sim.ViewModels
             }
         }
 
-        [RelayCommand]
-        public async Task AsyncStop(bool force = false)
+
+
+        public void Stop(bool force = false)
         {
             try
             {
                 forceExit = force;
-                if (controlCommand != null)
+                if (SubProcess?.HasExited == false)
+                {
+                    controlCommand?.Stop();
+                }
+                tokenSource.Cancel();
+                tokenSource.Dispose();
+            }
+            catch (Exception)
+            {
+            }
+
+            ProcessExit(force);
+        }
+
+        public async Task StopAsync(bool force = false)
+        {
+            try
+            {
+                forceExit = force;
+                if (controlCommand != null && SubProcess?.HasExited == false)
                 {
                     await controlCommand.StopAsync();
                 }
@@ -223,27 +236,33 @@ namespace Avalonia.S7Sim.ViewModels
             {
             }
 
-            try
-            {
-                if (force)
-                {
-                    SubProcess?.Kill();
-                }
-                else
-                {
-                    SubProcess?.WaitForExit();
-                }
-            }
-            catch (Exception)
-            {
-            }
+            ProcessExit(force);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteControl))]
+        public async Task StopC()
+        {
+            InProcess = true;
+
+            await StopAsync();
+
+            InProcess = false;
         }
 
         [RelayCommand]
+        public async Task Kill()
+        {
+            InProcess = true;
+            await StopAsync(true);
+            InProcess = false;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteControl))]
         private async Task ReStartAsync()
         {
+            InProcess = true;
             isRestart = true;
-            await AsyncStop();
+            await StopAsync();
 
             StdOut += $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} Warn] Restart .....\r\n";
 
@@ -251,6 +270,7 @@ namespace Avalonia.S7Sim.ViewModels
             {
                 StartScript(filePath);
             }
+            InProcess = false;
         }
     }
 }

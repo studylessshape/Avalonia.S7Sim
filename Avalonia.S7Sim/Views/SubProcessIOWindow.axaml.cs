@@ -78,7 +78,7 @@ public partial class SubProcessIOWindow : UrsaWindow
     protected override void OnClosed(EventArgs e)
     {
         var viewModel = (SubProcessIOViewModel?)this.DataContext;
-        viewModel?.AsyncStop(true);
+        viewModel?.Stop(true);
 
         base.OnClosed(e);
     }
