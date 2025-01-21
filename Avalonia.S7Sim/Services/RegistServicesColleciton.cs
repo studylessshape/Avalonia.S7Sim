@@ -1,5 +1,4 @@
-﻿using Avalonia.S7Sim.Services.Shell;
-using Avalonia.S7Sim.ViewModels;
+﻿using Avalonia.S7Sim.ViewModels;
 using Avalonia.S7Sim.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -39,6 +38,7 @@ internal static class RegistServicesColleciton
         //services.AddSingleton<RealtimeView>();
         //services.AddSingleton<RealtimeViewModel>();
 
+        services.AddTransient<ShellCommand>();
         services.AddTransient<IShellCommand, ShellCommand>();
 
         return services;

@@ -82,5 +82,11 @@ namespace PipeProtocol
                 }
             }
         }
+
+        public async Task RunOnTaskAsync(string pipeName, CancellationToken stoppingToken = default)
+        {
+            PipeName = pipeName;
+            await ExecuteAsync(pipeName, stoppingToken);
+        }
     }
 }

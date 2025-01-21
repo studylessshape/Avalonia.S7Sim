@@ -1,11 +1,9 @@
 ﻿using Avalonia.Controls;
 using Avalonia.S7Sim.Services;
-using Avalonia.S7Sim.Services.Shell;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Scripting.Utils;
-using S7Sim.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -47,6 +45,7 @@ namespace Avalonia.S7Sim.ViewModels
         private bool isRestart = false;
         private ControlCommand? controlCommand;
         private string? filePath;
+        private string? pipeName;
 
         public SubProcessIOViewModel()
         {
@@ -86,13 +85,11 @@ namespace Avalonia.S7Sim.ViewModels
             process.StartInfo.ArgumentList.Add(filePath);
             this.filePath = filePath;
             // Namedpipe target
-            string pipeName = GenPipeName();
+            pipeName = GenPipeName();
             process.StartInfo.ArgumentList.Add("-n");
             process.StartInfo.ArgumentList.Add(pipeName);
             // Remote stop command by namedpipe
             controlCommand = new ControlCommand($"{pipeName}_py");
-
-            pipeHost?.RunAsync(pipeName, tokenSource.Token);
 
             StdOut += $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} Info] NamedPipe run on name of '{pipeName}'{Environment.NewLine}";
             // Search path
@@ -122,6 +119,7 @@ namespace Avalonia.S7Sim.ViewModels
             {
                 _ = UpdateStandardOut(tokenSource.Token);
                 _ = UpdateStandardError(tokenSource.Token);
+                _ = pipeHost?.RunOnTaskAsync(pipeName, tokenSource.Token);
                 SubProcess?.WaitForExit();
                 if (!forceExit)
                 {

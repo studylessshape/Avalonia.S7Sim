@@ -5,8 +5,9 @@ namespace Avalonia.S7Sim.Services
 {
     public class PipeHost : PipeBaseHost
     {
-        public IShellCommand Shell { get; }
-        public PipeHost(IShellCommand shell, IS7DataBlockService dbService, IS7MBService mbService)
+        public ShellCommand Shell { get; }
+
+        public PipeHost(ShellCommand shell, IS7DataBlockService dbService, IS7MBService mbService)
         {
             this.Shell = shell;
             RegistCommand("shell", this.Shell);

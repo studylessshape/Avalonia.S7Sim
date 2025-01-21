@@ -2,7 +2,7 @@
 using Irihi.Avalonia.Shared.Contracts;
 using Ursa.Controls;
 
-namespace Avalonia.S7Sim.Services.Shell;
+namespace Avalonia.S7Sim.Services;
 
 public class ShellDialogWindow : DefaultDialogWindow
 {

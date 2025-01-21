@@ -9,7 +9,7 @@ using S7Sim.Services;
 using System;
 using Ursa.Controls;
 
-namespace Avalonia.S7Sim.Services.Shell;
+namespace Avalonia.S7Sim.Services;
 
 public class ShellCommand : IShellCommand
 {
@@ -31,9 +31,9 @@ public class ShellCommand : IShellCommand
     protected virtual Window CreateDialogWindow(string label)
     {
         var dialog = new ShellDialogWindow();
-        dialog.SetValue(ShellDialogWindow.ButtonsProperty, DialogButton.OK);
-        dialog.SetValue(ShellDialogWindow.TitleProperty, label);
-        dialog.SetValue(ShellDialogWindow.CanResizeProperty, true);
+        dialog.SetValue(DefaultDialogWindow.ButtonsProperty, DialogButton.OK);
+        dialog.SetValue(Window.TitleProperty, label);
+        dialog.SetValue(Window.CanResizeProperty, true);
 
         dialog.KeyBindings.Add(new Input.KeyBinding()
         {
@@ -60,7 +60,7 @@ public class ShellCommand : IShellCommand
             var dialog = CreateDialogWindow(label);
 
             var numberInput = new Controls.NumericUpDown();
-            numberInput.SetValue(Controls.NumericUpDown.MinWidthProperty, 200);
+            numberInput.SetValue(Layout.Layoutable.MinWidthProperty, 200);
             numberInput.SetValue(Controls.NumericUpDown.IncrementProperty, 1);
 
             dialog.Content = numberInput;
@@ -95,7 +95,7 @@ public class ShellCommand : IShellCommand
     /// <exception cref="OperationCanceledException"></exception>
     public int AcceptInputInt(string label)
     {
-        return (int)(AcceptInputFloat(label));
+        return (int)AcceptInputFloat(label);
     }
 
     /// <summary>
@@ -111,7 +111,7 @@ public class ShellCommand : IShellCommand
             var dialog = CreateDialogWindow(label);
 
             var textInput = new TextBox();
-            textInput.SetValue(TextBlock.MinWidthProperty, 200);
+            textInput.SetValue(Layout.Layoutable.MinWidthProperty, 200);
 
             dialog.Content = textInput;
             textInput.KeyBindings.Add(new Input.KeyBinding()
@@ -139,7 +139,7 @@ public class ShellCommand : IShellCommand
 
     public void ShowMessageBox(string message, int? icon = null)
     {
-        var content = new MessageContent { Message = message, Owner = dialogOwnerWindow };
+        var content = new MessageContent { Message = message, Owner = dialogOwnerWindow, Overlay = false };
         if (icon != null)
         {
             content.Icon = (MessageBoxIcon)icon.Value;
@@ -147,7 +147,7 @@ public class ShellCommand : IShellCommand
 
         Dispatcher.UIThread.Invoke(() =>
         {
-            MessageHelper.ShowMessage(content);
+            MessageBox.ShowAsync(dialogOwnerWindow, message, "", content.Icon, MessageBoxButton.OK);
         });
     }
 
