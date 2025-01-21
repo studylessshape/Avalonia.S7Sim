@@ -54,6 +54,7 @@ namespace PythonRun
             pipeHost.RunAsync($"{envSets.NamedPipe}_py", stopToken);
 
             IS7DataBlockService dbService = new S7DataBlockService(envSets.NamedPipe, "DB");
+            IS7MBService mbService = new S7MBService(envSets.NamedPipe, "MB");
             IShellCommand shellCommand = new ShellCommand(envSets.NamedPipe, "shell");
 
             var engine = Python.CreateEngine();
@@ -72,6 +73,7 @@ namespace PythonRun
 
             scope.SetVariable("DB", dbService);
             scope.SetVariable("S7", dbService);
+            scope.SetVariable("MB", mbService);
             scope.SetVariable("shell", shellCommand);
             scope.SetVariable("Logger", ConsoLog.Instance);
             scope.SetVariable("__PY_ENGINE__", engine);

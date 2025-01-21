@@ -111,7 +111,7 @@ namespace PythonRun
 
         public void WriteString(int dbNumber, int offset, int maxlen, string str)
         {
-            ProtocolExtra.SendCommand(pipeName, Module, nameof(WriteString), [dbNumber.ToString(), offset.ToString(), maxlen.ToString(), $"\"{str}\""]);
+            ProtocolExtra.SendCommand(pipeName, Module, nameof(WriteString), [dbNumber.ToString(), offset.ToString(), maxlen.ToString(), $"\"{str.Replace("\"", "\\\"")}\""]);
         }
 
         public void WriteUInt32(int dbNumber, int pos, uint value)
