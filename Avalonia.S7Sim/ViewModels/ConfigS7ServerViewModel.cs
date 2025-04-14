@@ -238,10 +238,15 @@ public partial class ConfigS7ServerViewModel : ViewModelBase
                 {
                     Patterns = ["*.csv"],
                     MimeTypes = ["text/csv"],
-                }
+                },
+                new FilePickerFileType("ALL")
+                {
+                    Patterns = ["*.*"],
+                    MimeTypes = ["*/*"],
+                },
             ]
         });
-        if (fileNames != null)
+        if (fileNames != null && fileNames.Count > 0)
         {
             if (MessageBoxResult.Yes == await MessageBox.ShowAsync("是否覆盖当前设置？", "提示", MessageBoxIcon.Question, MessageBoxButton.YesNo))
             {
