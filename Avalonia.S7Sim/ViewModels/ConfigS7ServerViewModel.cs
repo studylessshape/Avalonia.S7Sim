@@ -118,22 +118,29 @@ public partial class ConfigS7ServerViewModel : ViewModelBase
     {
         if (File.Exists(path))
         {
-            var fileContent = File.ReadAllLines(path);
-            var areaKindType = typeof(AreaKind);
-            foreach (var line in fileContent.Skip(1))
+            try
             {
-                var items = line.Split(',');
-                if (items.Length < 3)
+                var fileContent = File.ReadAllLines(path);
+                var areaKindType = typeof(AreaKind);
+                foreach (var line in fileContent.Skip(1))
                 {
-                    break;
-                }
+                    var items = line.Split(',');
+                    if (items.Length < 3)
+                    {
+                        break;
+                    }
 
-                S7Servers.Add(new S7ServerItem()
-                {
-                    AreaKind = (AreaKind)Enum.Parse(areaKindType, items[0]),
-                    BlockNumber = int.Parse(items[1]),
-                    BlockSize = int.Parse(items[2]),
-                });
+                    S7Servers.Add(new S7ServerItem()
+                    {
+                        AreaKind = (AreaKind)Enum.Parse(areaKindType, items[0]),
+                        BlockNumber = int.Parse(items[1]),
+                        BlockSize = int.Parse(items[2]),
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageHelper.ShowMessage(new MessageContent() { Message = $"加载S7配置出现错误！\n{ex}", Icon = MessageBoxIcon.Error });
             }
         }
     }
