@@ -72,6 +72,45 @@ public partial class OperationsViewModel : ViewModelBase
 
     #endregion
 
+    #region Byte Read and Write
+    [ObservableProperty] private byte _byteToWrite;
+    [ObservableProperty] private byte _byteRead;
+
+    [RelayCommand]
+    private void WriteByte()
+    {
+        try
+        {
+            _serverService.WriteByte(TargetDB, TargetPos, ByteToWrite);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
+        }
+    }
+
+    [RelayCommand]
+    private void ReadByte()
+    {
+        try
+        {
+            ByteRead = _serverService.ReadByte(TargetDB, TargetPos);
+        }
+        catch (IndexOutOfRangeException)
+        {
+            MessageHelper.ShowMessage("请求位置超过 DB 块大小");
+        }
+        catch (DbNumberNotExistException dbe)
+        {
+            MessageHelper.ShowMessage($"DbNumber={dbe.DbNumber} 不存在！");
+        }
+    }
+    #endregion
+
     #region Short Read And Write
 
     [ObservableProperty] private short _shortToWrite;
@@ -202,7 +241,7 @@ public partial class OperationsViewModel : ViewModelBase
 
     [ObservableProperty] private float _realToWrite;
 
-    [ObservableProperty] private ulong _realRead;
+    [ObservableProperty] private float _realRead;
 
     [RelayCommand]
     private void WriteReal()
@@ -226,7 +265,7 @@ public partial class OperationsViewModel : ViewModelBase
     {
         try
         {
-            RealRead = _serverService.ReadULong(TargetDB, TargetPos);
+            RealRead = _serverService.ReadReal(TargetDB, TargetPos);
         }
         catch (IndexOutOfRangeException)
         {

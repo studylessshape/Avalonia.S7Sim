@@ -49,6 +49,40 @@
                 </u:FormGroup>
             </u:Form>
         </TabItem>
+        <TabItem Header="Byte 操作">
+            <u:Form LabelPosition="Left"
+                    LabelWidth="*"
+                    LabelAlignment="Left"
+                    >
+                <u:FormGroup>
+                    <u:FormItem Label="读操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="读取"
+                                    Command="{Binding ReadByteCommand}"
+                                    />
+                            <TextBlock Text="{Binding ByteRead}"
+                                       VerticalAlignment="Center"
+                                       MinWidth="50"
+                                       />
+                        </StackPanel>
+                    </u:FormItem>
+                    <u:FormItem Label="写操作">
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10"
+                                    >
+                            <Button Content="写入"
+                                    Command="{Binding WriteByteCommand}"
+                                    />
+                            <u:NumericByteUpDown Value="{Binding ByteToWrite}"
+                                                 MinWidth="80"
+                                                 />
+                        </StackPanel>
+                    </u:FormItem>
+                </u:FormGroup>
+            </u:Form>
+        </TabItem>
         <TabItem Header="Short 操作">
             <u:Form LabelPosition="Left"
                     LabelWidth="*"
@@ -143,9 +177,9 @@
                             <Button Content="写入"
                                     Command="{Binding WriteULongCommand}"
                                     />
-                            <u:NumericUIntUpDown Value="{Binding ULongToWrite}"
-                                                 MinWidth="120"
-                                                 />
+                            <u:NumericULongUpDown Value="{Binding ULongToWrite}"
+                                                  MinWidth="120"
+                                                  />
                         </StackPanel>
                     </u:FormItem>
                 </u:FormGroup>
@@ -177,9 +211,9 @@
                             <Button Content="写入"
                                     Command="{Binding WriteRealCommand}"
                                     />
-                            <u:NumericUIntUpDown Value="{Binding RealToWrite}"
-                                                 MinWidth="120"
-                                                 />
+                            <u:NumericFloatUpDown Value="{Binding RealToWrite}"
+                                                  MinWidth="120"
+                                                  />
                         </StackPanel>
                     </u:FormItem>
                 </u:FormGroup>
