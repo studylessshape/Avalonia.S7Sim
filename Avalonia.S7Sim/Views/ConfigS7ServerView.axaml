@@ -62,13 +62,24 @@
                     <Binding Path="#PART_DataPanel.Margin.Top" />
                 </MultiBinding>
             </StackPanel.Height>
-            <Button Command="{Binding AddNewItemCommand}"
-                    HorizontalAlignment="Left"
-                    Classes="Success"
-                    x:Name="PART_AddButton"
-                    >
-                Add
-            </Button>
+            <StackPanel Orientation="Horizontal"
+                        Spacing="10"
+                        >
+                <Button Command="{Binding AddNewItemCommand}"
+                        HorizontalAlignment="Left"
+                        Theme="{DynamicResource SolidButton}"
+                        Classes="Success"
+                        x:Name="PART_AddButton"
+                        >
+                    Add
+                </Button>
+                <Button Classes="Warning"
+                        Command="{Binding ExportServerItemsCommand}"
+                        >
+                    导出
+                </Button>
+                <Button Command="{Binding ImportServerItemsCommand}">导入</Button>
+            </StackPanel>
             <DataGrid ItemsSource="{Binding S7Servers}"
                       IsReadOnly="False"
                       x:Name="DATA_Root"
