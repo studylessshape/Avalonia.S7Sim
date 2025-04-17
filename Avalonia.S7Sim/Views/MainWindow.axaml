@@ -41,9 +41,7 @@
             Margin="0 40 0 0"
             BorderBrush="{DynamicResource BorderCardBorderBrush}"
             >
-        <Grid ColumnDefinitions="3*,2,1*"
-              Margin="10 10"
-              >
+        <Grid Margin="10 10">
             <TabControl TabStripPlacement="Left">
                 <TabItem Header="DB 配置"
                          x:Name="PART_DBConfig"
