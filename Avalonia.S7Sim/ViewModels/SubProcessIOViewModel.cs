@@ -94,7 +94,7 @@ namespace Avalonia.S7Sim.ViewModels
             StdOut += $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} Info] NamedPipe run on name of '{pipeName}'{Environment.NewLine}";
             // Search path
             process.StartInfo.ArgumentList.Add("-s");
-            process.StartInfo.ArgumentList.AddRange(scriptsViewModel?.EngineSearchPaths.Select(path => path.Path) ?? []);
+            process.StartInfo.ArgumentList.AddRange(scriptsViewModel?.EngineSearchPaths ?? []);
 
             #region Process Initialize
             SubProcess = process;

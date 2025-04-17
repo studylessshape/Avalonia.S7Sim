@@ -6,8 +6,9 @@
               xmlns:u="https://irihi.tech/ursa"
               xmlns:local="using:Avalonia.S7Sim.Views"
               mc:Ignorable="d"
-              d:DesignWidth="800"
-              d:DesignHeight="450"
+              Width="800"
+              Height="500"
+              MinHeight="5"
               x:Class="Avalonia.S7Sim.Views.MainWindow"
               Icon="/Assets/avalonia-logo.ico"
               Title="S7 Simulate by Avalonia"
@@ -57,13 +58,6 @@
                          x:Name="PART_PyEngine"
                          />
             </TabControl>
-            <GridSplitter Grid.Column="1"
-                          ResizeDirection="Columns"
-                          IsTabStop="False"
-                          />
-            <ContentControl x:Name="PART_LogPanel"
-                            Grid.Column="2"
-                            />
         </Grid>
     </Border>
 </u:UrsaWindow>

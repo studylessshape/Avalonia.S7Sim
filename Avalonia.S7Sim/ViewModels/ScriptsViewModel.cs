@@ -7,9 +7,13 @@ using S7Sim.Services.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using S7Sim.Services.Models;
+using S7Sim.Utils.Extensions;
+using Ursa.Controls;
 
 namespace Avalonia.S7Sim.ViewModels;
 
@@ -23,11 +27,19 @@ public partial class ScriptsViewModel : ViewModelBase
 
     }
 #endif
-
+    private const string FILE_NAME = "search-path.txt";
     private readonly IScriptRunner _scriptRunner;
     private readonly IServiceProvider serviceProvider;
 
-    public ObservableCollection<PathForView> EngineSearchPaths { get; } = new();
+    public ObservableCollection<string> EngineSearchPaths { get; } = new();
+
+    private string SavedFileName
+    {
+        get
+        {
+            return Path.Combine(Path.GetDirectoryName(Environment.ProcessPath), FILE_NAME);
+        }
+    }
 
     public ScriptsViewModel(IScriptRunner scriptRunner, IServiceProvider serviceProvider)
     {
@@ -36,39 +48,52 @@ public partial class ScriptsViewModel : ViewModelBase
         var searchPaths = _scriptRunner.Engine.GetSearchPaths();
         if (searchPaths != null)
         {
-            EngineSearchPaths.AddRange(searchPaths.Select(p => new PathForView { Path = p, CanDelete = false }));
+            EngineSearchPaths.AddRange(searchPaths);
         }
-        EngineSearchPaths.CollectionChanged += PyEngineSearchPaths_CollectionChanged;
 
-        if (EngineSearchPaths.Count <= 1)
+        if (EngineSearchPaths.Count == 0)
         {
             var processPath = Path.GetDirectoryName(Environment.ProcessPath);
             if (!string.IsNullOrEmpty(processPath))
             {
-                EngineSearchPaths.AddRange([new PathForView()
-                {
-                    Path = Path.Combine(processPath, "lib"),
-                    CanDelete = false
-                },
-                new PathForView()
-                {
-                    Path = Path.Combine(processPath, "DLLs"),
-                    CanDelete = false
-                },
-                new PathForView()
-                {
-                    Path = Path.Combine(processPath, "predefined/s7svrsim"),
-                    CanDelete = false
-                }]);
+                EngineSearchPaths.AddRange([
+                    ".", Path.Combine(processPath, "lib"), Path.Combine(processPath, "DLLs"),
+                    Path.Combine(processPath, "predefined/s7svrsim")
+                ]);
             }
         }
+        LoadSearchPath(SavedFileName);
+        _scriptRunner.Engine.SetSearchPaths(EngineSearchPaths);
+        EngineSearchPaths.CollectionChanged += PyEngineSearchPaths_CollectionChanged;
+    }
+
+    private void LoadSearchPath(string path)
+    {
+        if (!File.Exists(path)) return;
+        try
+        {
+            var fileContent = File.ReadAllLines(path);
+            EngineSearchPaths.Clear();
+            EngineSearchPaths.AddRange(fileContent);
+        }
+        catch (Exception ex)
+        {
+            MessageHelper.ShowMessage(new MessageContent() { Message = $"加载路径出现错误！\n{ex}", Icon = MessageBoxIcon.Error });
+        }
+    }
+    
+    private void SaveServerItem(string path)
+    {
+        using var fileStream = new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+        fileStream.WriteString(string.Join(Environment.NewLine, EngineSearchPaths));
     }
 
     private void PyEngineSearchPaths_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
-        if (e.NewItems is not null)
+        if (e.Action != NotifyCollectionChangedAction.Move)
         {
-            _scriptRunner.Engine.SetSearchPaths(e.NewItems.Select(obj => obj).Where(obj => obj is PathForView).Select(p => ((PathForView)p).Path).ToList());
+            SaveServerItem(SavedFileName);
+            _scriptRunner.Engine.SetSearchPaths(EngineSearchPaths);
         }
     }
 
@@ -82,9 +107,9 @@ public partial class ScriptsViewModel : ViewModelBase
                 AllowMultiple = true,
             });
 
-            if (folders is not null && folders.Count > 0)
+            if (folders != null && folders.Count > 0)
             {
-                EngineSearchPaths.AddRange(folders.Where(f => f != null).Select(f => new PathForView() { Path = f.Path.AbsolutePath, CanDelete = true }).Distinct().Where(f => !EngineSearchPaths.Contains(f)));
+                EngineSearchPaths.AddRange(folders.Where(f => f != null).Select(f => f.Path.AbsolutePath).Distinct().Where(f => !EngineSearchPaths.Contains(f)));
             }
         }
         catch (System.Exception ex)
@@ -94,6 +119,12 @@ public partial class ScriptsViewModel : ViewModelBase
                 Message = $"打开路径出现错误！\n{ex.Message}"
             });
         }
+    }
+    
+    [RelayCommand]
+    private void DeletePath(string path)
+    {
+        EngineSearchPaths.Remove(path);
     }
 }
 

@@ -7,6 +7,7 @@
              d:DesignWidth="800"
              d:DesignHeight="450"
              x:Class="Avalonia.S7Sim.Views.ScriptsView"
+             x:Name="ROOT_PythonSearchPaths"
              >
     <Design.DataContext>
         <vm:ScriptsViewModel />
@@ -19,15 +20,16 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="*, auto">
-                            <SelectableTextBlock Text="{Binding Path}" />
-                            <!--<Button Classes="Small Danger"
+                            <SelectableTextBlock Text="{Binding .}" />
+                            <Button Classes="Small Danger"
                                     Theme="{DynamicResource BorderlessButton}"
                                     Grid.Column="1"
-                                    IsVisible="{Binding CanDelete}"
                                     MaxHeight="10"
+                                    Command="{Binding #ROOT_PythonSearchPaths.DataContext.DeletePathCommand}"
+                                    CommandParameter="{Binding .}"
                                     >
                                 <PathIcon Data="{StaticResource circle_delete}" />
-                            </Button>-->
+                            </Button>
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
