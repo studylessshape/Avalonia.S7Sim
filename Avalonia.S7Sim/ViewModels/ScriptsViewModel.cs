@@ -51,13 +51,13 @@ public partial class ScriptsViewModel : ViewModelBase
             EngineSearchPaths.AddRange(searchPaths);
         }
 
-        if (EngineSearchPaths.Count == 0)
+        if (EngineSearchPaths.Count <= 1)
         {
             var processPath = Path.GetDirectoryName(Environment.ProcessPath);
             if (!string.IsNullOrEmpty(processPath))
             {
                 EngineSearchPaths.AddRange([
-                    ".", Path.Combine(processPath, "lib"), Path.Combine(processPath, "DLLs"),
+                    Path.Combine(processPath, "lib"), Path.Combine(processPath, "DLLs"),
                     Path.Combine(processPath, "predefined/s7svrsim")
                 ]);
             }
