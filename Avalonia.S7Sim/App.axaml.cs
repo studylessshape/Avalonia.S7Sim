@@ -77,21 +77,29 @@ namespace Avalonia.S7Sim
             base.OnFrameworkInitializationCompleted();
         }
 
-        private void ExitHost(object? sender, ControlledApplicationLifetimeExitEventArgs e)
+        private async void ExitHost(object? sender, ControlledApplicationLifetimeExitEventArgs e)
         {
-            using (s_host)
+            if (s_host != null)
             {
-                try
+                using (s_host)
                 {
-                    var lifetime = s_host?.Services.GetRequiredService<IHostApplicationLifetime>();
-                    lifetime?.StopApplication();
-                    stopTokenSource.Cancel();
-                }
-                catch (Exception)
-                {
+                    try
+                    {
+                        if (s_host != null)
+                        {
+                            var lifetime = s_host.Services.GetRequiredService<IHostApplicationLifetime>();
+                            lifetime?.StopApplication();
+                            stopTokenSource.Cancel();
+                            await s_host.StopAsync();
+                        }
+                    }
+                    catch (Exception)
+                    {
 
+                    }
                 }
             }
+
         }
     }
 }

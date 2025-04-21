@@ -46,11 +46,6 @@
                                     >
                                 导入 Python 脚本
                             </Button>
-                            <CheckBox IsChecked="{Binding AutoShowWindowWhenRunScript}"
-                                      VerticalAlignment="Center"
-                                      >
-                                显示脚本窗口
-                            </CheckBox>
                         </StackPanel>
                     </u:FormItem>
                 </u:FormGroup>

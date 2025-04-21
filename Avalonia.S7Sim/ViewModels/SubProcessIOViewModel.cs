@@ -7,7 +7,6 @@ using Microsoft.Scripting.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -46,6 +45,7 @@ namespace Avalonia.S7Sim.ViewModels
         private ControlCommand? controlCommand;
         private string? filePath;
         private string? pipeName;
+        private Task? _task;
 
         public SubProcessIOViewModel()
         {
@@ -77,7 +77,7 @@ namespace Avalonia.S7Sim.ViewModels
         {
             tokenSource = new();
 
-            Process process = new Process();
+            Process process = new();
             // Program file
             process.StartInfo.FileName = "PythonRun.exe";
             // Script file path
@@ -115,12 +115,16 @@ namespace Avalonia.S7Sim.ViewModels
 
         public void StartUpdate()
         {
-            var thread = new Thread(async () =>
+            _task = Task.Run(async () =>
             {
                 _ = UpdateStandardOut(tokenSource.Token);
                 _ = UpdateStandardError(tokenSource.Token);
                 _ = pipeHost?.RunOnTaskAsync(pipeName, tokenSource.Token);
-                SubProcess?.WaitForExit();
+                var processTask = SubProcess?.WaitForExitAsync(tokenSource.Token);
+                if (processTask != null)
+                {
+                    await processTask;
+                }
                 if (!forceExit)
                 {
                     await StopAsync();
@@ -137,8 +141,7 @@ namespace Avalonia.S7Sim.ViewModels
                 {
                     CloseWindow?.Invoke();
                 }
-            });
-            thread.Start();
+            }, tokenSource.Token);
         }
 
         async Task UpdateStandardOut(CancellationToken stopToken)
@@ -228,7 +231,6 @@ namespace Avalonia.S7Sim.ViewModels
                     await controlCommand.StopAsync();
                 }
                 await tokenSource.CancelAsync();
-                tokenSource.Dispose();
             }
             catch (Exception)
             {

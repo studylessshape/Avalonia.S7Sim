@@ -62,22 +62,32 @@ namespace PipeProtocol
             while (!stoppingToken.IsCancellationRequested)
             {
                 // 开启服务管道
+                var pipeServerStream = new NamedPipeServerStream(pipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Byte, PipeOptions.Asynchronous);
                 try
                 {
-                    using var pipeServerStream = new NamedPipeServerStream(pipeName, PipeDirection.InOut);
                     await pipeServerStream.WaitForConnectionAsync(stoppingToken);
-                    if (pipeServerStream.IsConnected)
+                    _ = Task.Run(async () =>
                     {
-                        var command = await ProtocolTools.ReadCommandAsync(pipeServerStream, stoppingToken);
-                        await ProtocolTools.SendResponseAsync(pipeServerStream, command.RunCommand(commandModules), stoppingToken);
+                        if (pipeServerStream.IsConnected)
+                        {
+                            var command = await ProtocolTools.ReadCommandAsync(pipeServerStream, stoppingToken);
+                            await ProtocolTools.SendResponseAsync(pipeServerStream, command.RunCommand(commandModules), stoppingToken);
+                        }
+                        pipeServerStream.Close();
+                        pipeServerStream.Dispose();
+                    });
+                }
+                catch (OperationCanceledException cancelException)
+                {
+                    if (cancelException.CancellationToken.IsCancellationRequested)
+                    {
+                        pipeServerStream.Close();
+                        pipeServerStream.Dispose();
+                        return;
                     }
                 }
                 catch (Exception e)
                 {
-                    if (e is OperationCanceledException cancelException && cancelException.CancellationToken.IsCancellationRequested)
-                    {
-                        return;
-                    }
                     LogMessage($"Occurs error on NamedPipe:\n{e.Message}", 3);
                 }
             }

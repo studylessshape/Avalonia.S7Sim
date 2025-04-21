@@ -4,15 +4,11 @@ using Avalonia.S7Sim.Messages;
 using Avalonia.S7Sim.Services;
 using Avalonia.S7Sim.Views;
 using Avalonia.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Scripting.Utils;
 using S7Sim.Services.Scripts;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Ursa.Controls;
 
@@ -27,7 +23,6 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
     {
 
     }
-
 #endif
 
     private readonly IScriptRunner _scriptRunner;
@@ -36,9 +31,6 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
     private bool disposedValue;
     private List<Window> scriptWindow = [];
     private readonly ScriptsViewModel scriptsViewModel;
-
-    [ObservableProperty]
-    private bool autoShowWindowWhenRunScript = true;
 
     public S7CommandViewModel(ConfigS7ServerViewModel configModel, OperationsViewModel operationsModel, ScriptsViewModel scriptsViewModel,
                               IScriptRunner scriptRunner, IServiceProvider serviceProvider, PipeProfiles pipeProfiles)
@@ -98,7 +90,6 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
             {
                 Title = path
             };
-
             scriptWindow.Add(window);
             window.Closed += (_, _) =>
             {
@@ -107,38 +98,8 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
 
             var viewModel = (SubProcessIOViewModel?)window.DataContext;
             viewModel?.StartScript(path);
-            if (AutoShowWindowWhenRunScript)
-            {
-                window.Show();
-            }
-            else
-            {
-                window.Hide();
-            }
+            window.Show();
         });
-    }
-
-    partial void OnAutoShowWindowWhenRunScriptChanged(bool value)
-    {
-        ShowScriptWindow(value);
-    }
-
-    private void ShowScriptWindow(bool show)
-    {
-        if (show)
-        {
-            foreach (var window in scriptWindow)
-            {
-                window.Show();
-            }
-        }
-        else
-        {
-            foreach (var window in scriptWindow)
-            {
-                window.Hide();
-            }
-        }
     }
 
     protected virtual void Dispose(bool disposing)
@@ -147,7 +108,7 @@ public partial class S7CommandViewModel : ViewModelBase, IDisposable
         {
             if (disposing)
             {
-                foreach (var window in scriptWindow)
+                foreach (var window in scriptWindow.ToArray())
                 {
                     window.Close();
                 }

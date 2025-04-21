@@ -14,10 +14,11 @@ namespace Avalonia.S7Sim.Views
             InitializeComponent();
         }
 #endif
-
+        private readonly IServiceProvider serviceProvider;
         public MainWindow(MainWindowViewModel viewModel, IServiceProvider serviceProvider)
         {
             this.DataContext = viewModel;
+            this.serviceProvider = serviceProvider;
             InitializeComponent();
 
             if (App.Current != null)
@@ -30,6 +31,14 @@ namespace Avalonia.S7Sim.Views
             PART_PyEngine.Content = serviceProvider.GetService<ScriptsView>();
             // PART_LogPanel.Content = serviceProvider.GetService<LogPanel>();
             //PART_DBTable.Content = serviceProvider.GetService<RealtimeView>();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            var viewModel = serviceProvider.GetService<S7CommandViewModel>();
+            viewModel?.Dispose();
+
+            base.OnClosed(e);
         }
     }
 }
