@@ -68,27 +68,40 @@ namespace PipeProtocol
                     await pipeServerStream.WaitForConnectionAsync(stoppingToken);
                     _ = Task.Run(async () =>
                     {
-                        if (pipeServerStream.IsConnected)
+                        try
                         {
-                            var command = await ProtocolTools.ReadCommandAsync(pipeServerStream, stoppingToken);
-                            await ProtocolTools.SendResponseAsync(pipeServerStream, command.RunCommand(commandModules), stoppingToken);
+                            if (pipeServerStream.IsConnected)
+                            {
+                                var command = await ProtocolTools.ReadCommandAsync(pipeServerStream, stoppingToken);
+                                await ProtocolTools.SendResponseAsync(pipeServerStream, command.RunCommand(commandModules), stoppingToken);
+                            }
+                            
                         }
-                        pipeServerStream.Close();
-                        pipeServerStream.Dispose();
+                        catch (Exception)
+                        {
+                        }
+                        finally
+                        {
+                            pipeServerStream.Close();
+                            pipeServerStream.Dispose();
+                        }
                     });
                 }
                 catch (OperationCanceledException cancelException)
                 {
                     if (cancelException.CancellationToken.IsCancellationRequested)
                     {
-                        pipeServerStream.Close();
-                        pipeServerStream.Dispose();
                         return;
                     }
                 }
                 catch (Exception e)
                 {
                     LogMessage($"Occurs error on NamedPipe:\n{e.Message}", 3);
+                }
+                finally
+                {
+                    pipeServerStream.Close();
+                    pipeServerStream.Dispose();
                 }
             }
         }
