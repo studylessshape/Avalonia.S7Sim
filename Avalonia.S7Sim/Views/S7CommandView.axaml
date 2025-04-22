@@ -46,6 +46,7 @@
                                     >
                                 导入 Python 脚本
                             </Button>
+                            <Button>浏览运行日志</Button>
                         </StackPanel>
                     </u:FormItem>
                 </u:FormGroup>

@@ -10,14 +10,14 @@ namespace PythonRun.Test
         const string pipeName = "TestMethodPipe";
 
         [TestMethod]
-        public void TestMethod1()
+        public async Task TestMethod1()
         {
             EnvSets? envSets = Program.ParseArgs(
             [
                 "-n",
                 pipeName,
                 "-f",
-                "D:\\Projects\\rust\\zc_plc_tcp\\task_in2.py"
+                "times.py"
             ]);
 
             if (envSets == null)
@@ -25,19 +25,22 @@ namespace PythonRun.Test
                 return;
             }
 
-            ControlCommand controlCommand = new ControlCommand();
+            ControlCommand controlCommand = new();
+            CancellationTokenSource stopTokenSource = new CancellationTokenSource();
 
-            var scope = Program.CreateScriptEnv(envSets, controlCommand);
+            var scope = Program.CreateScriptEnv(envSets, controlCommand, stopTokenSource.Token);
 
             StartPipeHost(controlCommand.StopToken);
 
-            Program.RunScript(envSets.FilePath, scope);
+            var task = Task.Run(() => Program.RunScript(envSets.FilePath, scope));
 
             Avalonia.S7Sim.Services.ControlCommand windowsControl = new Avalonia.S7Sim.Services.ControlCommand($"{pipeName}_py");
 
             windowsControl.Stop();
 
-            Program.Release(controlCommand);
+            await task;
+
+            Program.Release(controlCommand, stopTokenSource);
         }
 
         void StartPipeHost(CancellationToken stopToken)

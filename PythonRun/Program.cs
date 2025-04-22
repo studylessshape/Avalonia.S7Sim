@@ -15,12 +15,13 @@ namespace PythonRun
             {
                 return;
             }
-            ControlCommand controlCommand = new ControlCommand();
 
-            var scope = CreateScriptEnv(envSets, controlCommand);
+            ControlCommand controlCommand = new ControlCommand();
+            CancellationTokenSource stopTokenSource = new CancellationTokenSource();
+            var scope = CreateScriptEnv(envSets, controlCommand, stopTokenSource.Token);
             RunScript(envSets.FilePath, scope);
 
-            Release(controlCommand);
+            Release(controlCommand, stopTokenSource);
         }
 
         public static EnvSets? ParseArgs(string[] args)
@@ -45,13 +46,13 @@ namespace PythonRun
             return envSets;
         }
 
-        public static ScriptScope CreateScriptEnv(EnvSets envSets, ControlCommand controlCommand)
+        public static ScriptScope CreateScriptEnv(EnvSets envSets, ControlCommand controlCommand, CancellationToken pipeStopToken)
         {
             var stopToken = controlCommand.StopToken;
 
             PipeHost pipeHost = new();
             pipeHost.RegistCommand("control", controlCommand);
-            pipeHost.RunAsync($"{envSets.NamedPipe}_py", stopToken);
+            pipeHost.RunAsync($"{envSets.NamedPipe}_py", pipeStopToken);
 
             IS7DataBlockService dbService = new S7DataBlockService(envSets.NamedPipe, "DB");
             IS7MBService mbService = new S7MBService(envSets.NamedPipe, "MB");
@@ -89,7 +90,7 @@ namespace PythonRun
             code.Execute(scope);
         }
 
-        public static void Release(ControlCommand controlCommand)
+        public static void Release(ControlCommand controlCommand, CancellationTokenSource stopTokenSource)
         {
             try
             {
@@ -97,6 +98,15 @@ namespace PythonRun
             }
             catch (Exception)
             {
+            }
+
+            try
+            {
+                stopTokenSource.Cancel();
+            }
+            catch (Exception)
+            {
+
             }
         }
     }

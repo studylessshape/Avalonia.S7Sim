@@ -6,6 +6,7 @@
               xmlns:u="using:Ursa.Controls"
               xmlns:scg="using:System.Collections.Generic"
               xmlns:sys="using:System"
+              xmlns:uc="using:Avalonia.S7Sim.UserControls"
               mc:Ignorable="d"
               d:DesignWidth="600"
               d:DesignHeight="400"

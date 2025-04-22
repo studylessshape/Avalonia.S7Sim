@@ -120,11 +120,7 @@ namespace Avalonia.S7Sim.ViewModels
                 _ = UpdateStandardOut(tokenSource.Token);
                 _ = UpdateStandardError(tokenSource.Token);
                 _ = pipeHost?.RunOnTaskAsync(pipeName, tokenSource.Token);
-                var processTask = SubProcess?.WaitForExitAsync(tokenSource.Token);
-                if (processTask != null)
-                {
-                    await processTask;
-                }
+                SubProcess?.WaitForExit();
                 if (!forceExit)
                 {
                     await StopAsync();
@@ -141,7 +137,7 @@ namespace Avalonia.S7Sim.ViewModels
                 {
                     CloseWindow?.Invoke();
                 }
-            }, tokenSource.Token);
+            });
         }
 
         async Task UpdateStandardOut(CancellationToken stopToken)
@@ -230,13 +226,20 @@ namespace Avalonia.S7Sim.ViewModels
                 {
                     await controlCommand.StopAsync();
                 }
+            }
+            catch (Exception)
+            {
+            }
+
+            try
+            {
                 await tokenSource.CancelAsync();
             }
             catch (Exception)
             {
             }
 
-            ProcessExit(force);
+            await Task.Run(() => ProcessExit(force));
         }
 
         [RelayCommand(CanExecute = nameof(CanExecuteControl))]

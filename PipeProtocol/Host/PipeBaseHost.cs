@@ -75,7 +75,7 @@ namespace PipeProtocol
                                 var command = await ProtocolTools.ReadCommandAsync(pipeServerStream, stoppingToken);
                                 await ProtocolTools.SendResponseAsync(pipeServerStream, command.RunCommand(commandModules), stoppingToken);
                             }
-                            
+
                         }
                         catch (Exception)
                         {
@@ -100,8 +100,11 @@ namespace PipeProtocol
                 }
                 finally
                 {
-                    pipeServerStream.Close();
-                    pipeServerStream.Dispose();
+                    if (stoppingToken.IsCancellationRequested)
+                    {
+                        pipeServerStream.Close();
+                        pipeServerStream.Dispose();
+                    }
                 }
             }
         }
