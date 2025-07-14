@@ -103,6 +103,8 @@ namespace Avalonia.S7Sim.ViewModels
             SubProcess.StartInfo.RedirectStandardError = true;
             SubProcess.StartInfo.RedirectStandardInput = true;
             SubProcess.StartInfo.RedirectStandardOutput = true;
+            SubProcess.OutputDataReceived += Process_OutputDataReceived;
+            SubProcess.ErrorDataReceived += Process_OutputDataReceived;
             #endregion
 
             StdOut += $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss} Info] {process.StartInfo.FileName} {string.Join(' ', process.StartInfo.ArgumentList)}{Environment.NewLine}";
@@ -113,13 +115,22 @@ namespace Avalonia.S7Sim.ViewModels
             StartUpdate();
         }
 
+        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.Data)) return;
+            lock(stdOutLock)
+            {
+                StdOut += $"{e.Data}{Environment.NewLine}";
+            }
+        }
+
         public void StartUpdate()
         {
             _task = Task.Run(async () =>
             {
-                _ = UpdateStandardOut(tokenSource.Token);
-                _ = UpdateStandardError(tokenSource.Token);
                 _ = pipeHost?.RunOnTaskAsync(pipeName, tokenSource.Token);
+                SubProcess?.BeginOutputReadLine();
+                SubProcess?.BeginErrorReadLine();
                 SubProcess?.WaitForExit();
                 if (!forceExit)
                 {
@@ -138,44 +149,6 @@ namespace Avalonia.S7Sim.ViewModels
                     CloseWindow?.Invoke();
                 }
             });
-        }
-
-        async Task UpdateStandardOut(CancellationToken stopToken)
-        {
-            while (!stopToken.IsCancellationRequested)
-            {
-                if (SubProcess != null)
-                {
-                    var buffer = new char[1024].AsMemory();
-                    var readLength = await SubProcess.StandardOutput.ReadAsync(buffer, stopToken).ConfigureAwait(false);
-                    if (readLength > 0)
-                    {
-                        lock (StdOutLock)
-                        {
-                            StdOut += new string(buffer.ToArray()[..readLength]);
-                        }
-                    }
-                }
-            }
-        }
-
-        async Task UpdateStandardError(CancellationToken stopToken)
-        {
-            while (!stopToken.IsCancellationRequested)
-            {
-                if (SubProcess != null)
-                {
-                    var buffer = new char[1024].AsMemory();
-                    var readLength = await SubProcess.StandardError.ReadAsync(buffer, stopToken);
-                    if (readLength > 0)
-                    {
-                        lock (StdOutLock)
-                        {
-                            StdOut += new string(buffer.ToArray()[..readLength]);
-                        }
-                    }
-                }
-            }
         }
 
         void ProcessExit(bool force = false)
